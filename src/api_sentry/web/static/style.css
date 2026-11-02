@@ -8,3 +8,38 @@
 
 /* Contain the visually hidden column label inside the scrollable table. */
 th{position:relative}
+
+/* Liquid glass: opaque fallback first; enhancement remains purely visual. */
+:root{--bg:#eaf0f6;--ink:#183343;--muted:#526a78;--border:#ffffffb3;--lime:#b7f3df;--green:#176957;--glass-shadow:0 12px 36px #26465f10,inset 0 1px 0 #ffffffef;--ease:cubic-bezier(.22,1,.36,1)}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at 12% 12%,#b4e9df 0,transparent 40%),radial-gradient(ellipse at 88% 18%,#c9cef5 0,transparent 44%),radial-gradient(ellipse at 65% 90%,#d1eaf7 0,transparent 45%),#edf2f6;background-attachment:fixed}
+.sidebar{background:linear-gradient(155deg,#173a43ed,#20394bed);border-right:1px solid #ffffff40;box-shadow:8px 0 40px #193a4812}
+.topbar{background:#f6fafde8;border-bottom:1px solid #ffffffc9}
+.panel,.metric,.report-banner,.guide-page article{background:linear-gradient(135deg,#ffffffed,#f4f9fce8);border:1px solid #ffffffd9;border-radius:20px;box-shadow:var(--glass-shadow)}
+.report-banner{background:linear-gradient(120deg,#e5fff3ed,#eff4ffdf)}
+.metric{position:relative;overflow:hidden;transition:transform .4s var(--ease),box-shadow .4s var(--ease),background .3s}
+.metric::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 20%,#ffffff9c 45%,transparent 70%);transform:translateX(-150%);transition:transform .8s var(--ease)}
+.metric:hover::after{transform:translateX(150%)}
+.metric:hover{transform:translateY(-4px);box-shadow:0 18px 40px #24456020,inset 0 1px 0 white}
+.button,.nav-item,.text-button,.icon-button{transition:transform .25s var(--ease),background .25s,box-shadow .25s,color .25s}
+.button{border-radius:12px;padding:12px 18px;min-height:42px}
+.button.primary{background:linear-gradient(135deg,#d8ffef,#a4e9d9);border:1px solid #ffffffbc;box-shadow:0 6px 18px #16745e18,inset 0 1px 0 #fff;color:#194e43}
+.button.secondary{background:#ffffffa6;border:1px solid #ffffffec;box-shadow:0 5px 18px #233f5510,inset 0 1px 0 white}
+.button:hover{transform:translateY(-2px);box-shadow:0 9px 24px #214f6226}.button:active,.metric:active{transform:translateY(0) scale(.98)}
+.nav-item{border:1px solid transparent;border-radius:12px}.nav-item.active{background:linear-gradient(120deg,#d6fff227,#ebf3ff16);border-color:#ffffff30;color:#e3fff4;box-shadow:inset 0 1px 0 #ffffff20}.nav-item:hover{background:#ffffff16}
+.workspace,.coverage-note{background:#ffffff08;border-color:#ffffff24;border-radius:14px}.brand-icon{background:linear-gradient(140deg,#defff1,#8ee1ce);box-shadow:inset 0 1px 0 white,0 4px 14px #071a4033}
+.runtime-pill,.tag{background:#ffffff9e;color:#416357;border-color:#ffffffd4;border-radius:8px}
+h1{letter-spacing:-1.3px;color:#163b48}.eyebrow{color:#527369}.panel-heading h2{color:#284653}
+.metric-label,.category,.subtle,.metric small,.posture-copy p,.coverage-stats small,.coverage-legend,.legend,.table-footer,.page-footer,.section-note{color:#5b7180}
+.search input,.filters select,form input,form select{background:#ffffffad;border:1px solid #d2dfe9;border-radius:10px;transition:box-shadow .2s,border-color .2s}
+:focus-visible{outline:3px solid #387b9c;outline-offset:4px}.search input:focus{border-color:#74b8c5;box-shadow:0 0 0 4px #8edbc82b}
+th{background:#eaf2f7b5;color:#57717e}td{border-bottom-color:#d7e3ec7a}tbody tr{transition:background .2s}tbody tr:hover{background:#ffffffb0}td code{color:#607e89}
+.ring>div{background:#f8fcfd}.ring{box-shadow:0 6px 20px #234e5f14}.coverage-bar{background:#d7e3ec}.coverage-bar span{transition:flex-grow .6s var(--ease)}
+dialog{background:linear-gradient(145deg,#fffffff5,#edf5faf2);border:1px solid #ffffffeb;border-radius:24px;box-shadow:0 30px 100px #193e4e40,inset 0 1px 0 white}dialog[open]{animation:glass-enter .35s var(--ease) both}dialog::backdrop{background:#18344965;backdrop-filter:blur(8px)}
+pre{background:#e9f2f6c9;border-color:#ffffff;border-radius:12px;color:#34596a}.guide-card p{color:#526b79}.guide-page header{border-bottom:1px solid #ffffffa8;padding-bottom:24px}.guide-page .brand{color:#244a57}
+#overview-view:not([hidden]),#guide-view:not([hidden]),#history-view:not([hidden]),#findings-view:not([hidden]){animation:glass-enter .5s var(--ease) both}
+@keyframes glass-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.panel,.metric,.report-banner,.topbar,.guide-page article{background-color:#ffffff5c;backdrop-filter:blur(22px) saturate(135%);-webkit-backdrop-filter:blur(22px) saturate(135%)}.panel,.metric,.guide-page article{background-image:linear-gradient(135deg,#ffffffba,#f4f9fc75)}.sidebar{backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}}
+@media(max-width:600px){.panel,.metric{border-radius:16px}.topbar{padding-inline:20px}.button{min-height:44px}.panel,.metric,.report-banner{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.metric:hover,.button:hover{transform:none}.metric::after{display:none}}
+@media(forced-colors:active){.panel,.metric,.button,.nav-item{border:1px solid CanvasText}.sidebar{background:Canvas;color:CanvasText}}
