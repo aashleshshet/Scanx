@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "CheckResult": {
+      "additionalProperties": false,
+      "properties": {
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "operation": {
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "inconclusive",
+            "skipped",
+            "error"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "observations": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Observations",
+          "type": "object"
+        }
+      },
+      "required": [
+        "module",
+        "operation",
+        "status",
+        "reason"
+      ],
+      "title": "CheckResult",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        },
+        "verification": {
+          "default": "needs_review",
+          "enum": [
+            "confirmed",
+            "needs_review"
+          ],
+          "title": "Verification",
+          "type": "string"
+        },
+        "operation": {
+          "title": "Operation",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "evidence": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Evidence",
+          "type": "object"
+        },
+        "remediation": {
+          "title": "Remediation",
+          "type": "string"
+        },
+        "owasp": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Owasp",
+          "type": "array"
+        },
+        "cwe": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cwe",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rule_id",
+        "module",
+        "title",
+        "severity",
+        "confidence",
+        "operation",
+        "description",
+        "remediation"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "Severity": {
+      "enum": [
+        "Critical",
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "title": "Severity",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool_version": {
+      "default": "0.1.0",
+      "title": "Tool Version",
+      "type": "string"
+    },
+    "scan_id": {
+      "title": "Scan Id",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "finished_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finished At"
+    },
+    "target": {
+      "title": "Target",
+      "type": "string"
+    },
+    "spec_sha256": {
+      "title": "Spec Sha256",
+      "type": "string"
+    },
+    "status": {
+      "default": "partial",
+      "enum": [
+        "complete",
+        "partial"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "modules": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Modules",
+      "type": "array"
+    },
+    "operations_discovered": {
+      "title": "Operations Discovered",
+      "type": "integer"
+    },
+    "operations_scheduled": {
+      "title": "Operations Scheduled",
+      "type": "integer"
+    },
+    "requests_sent": {
+      "default": 0,
+      "title": "Requests Sent",
+      "type": "integer"
+    },
+    "summary": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/Severity"
+      },
+      "title": "Summary",
+      "type": "object"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/CheckResult"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "started_at",
+    "target",
+    "spec_sha256",
+    "modules",
+    "operations_discovered",
+    "operations_scheduled"
+  ],
+  "title": "ScanReport",
+  "type": "object"
+}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'">
+<title>API Security Assessment</title><style>
+:root{color-scheme:light;--ink:#172c44;--line:#dce4ed}*{box-sizing:border-box}
+body{margin:0;background:#f3f6fa;color:var(--ink);font:16px/1.6 system-ui,sans-serif}
+main{max-width:1080px;margin:40px auto;padding:0 24px}header{background:#172c44;color:#fff;padding:32px;border-radius:14px}
+h1{margin:0;font-size:32px}h2{margin-top:36px}.label{font-size:13px;letter-spacing:.03em}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+.metric,article{background:white;border:1px solid var(--line);border-radius:10px;padding:22px}
+.metric b{display:block;font-size:30px}.finding{margin:18px 0;border-left:6px solid #c9972a}
+.finding.high,.finding.critical{border-left-color:#b53c49}.finding.low{border-left-color:#3a7898}
+h3{margin:5px 0}code,pre{font-family:ui-monospace,monospace;font-size:13px}pre{overflow:auto;background:#f2f5f9;padding:16px}
+table{width:100%;border-collapse:collapse;background:white;font-size:13px}th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+@media(max-width:640px){.metrics{grid-template-columns:repeat(2,1fr)}main{padding:0 12px}}
+</style></head><body><main><header><p class="label">API SENTRY · SECURITY ASSESSMENT</p>
+<h1>REST API Security Review</h1><p>https://synthetic-api.invalid</p>
+<p class="label">COMPLETE · 2026-11-02T14:26:47.323820Z UTC</p></header>
+<section class="metrics"><div class="metric"><b>0</b>Critical</div><div class="metric"><b>0</b>High</div><div class="metric"><b>0</b>Medium</div><div class="metric"><b>0</b>Low</div></section><h2>Executive assessment</h2>
+<p>The configured scan produced <strong>0 findings</strong> across
+3 operations using 73 requests.
+Prioritize confirmed authorization failures, then validate candidate findings.</p>
+<p>Severity describes potential impact; confidence describes evidence strength.
+Skipped and inconclusive checks are coverage gaps, not passes.</p>
+<h2>Findings</h2><p>No findings were produced by completed configured checks.</p>
+<h2>Coverage and check outcomes</h2><table><thead><tr><th>Operation</th><th>Module</th><th>Status</th><th>Reason</th></tr></thead>
+<tbody><tr><td>GET /health</td><td>auth</td><td>passed</td><td>Public route behavior inventoried; authentication is not required by policy</td></tr><tr><td>GET /health</td><td>bola</td><td>skipped</td><td>BOLA needs a GET operation and explicit private-object fixtures</td></tr><tr><td>GET /health</td><td>cors</td><td>passed</td><td>No tested credentialed-origin misconfiguration observed</td></tr><tr><td>GET /health</td><td>headers</td><td>passed</td><td>Header presence and diagnostic disclosure checked</td></tr><tr><td>GET /health</td><td>injection</td><td>skipped</td><td>Select injection_parameters in the request fixture</td></tr><tr><td>GET /health</td><td>rate_limit</td><td>skipped</td><td>Enable rate_limit for an explicit request fixture</td></tr><tr><td>GET /orders/{order_id}</td><td>auth</td><td>passed</td><td>Authenticated control succeeded; anonymous read denied</td></tr><tr><td>GET /orders/{order_id}</td><td>bola</td><td>passed</td><td>Both configured cross-user reads were denied</td></tr><tr><td>GET /orders/{order_id}</td><td>cors</td><td>passed</td><td>No tested credentialed-origin misconfiguration observed</td></tr><tr><td>GET /orders/{order_id}</td><td>headers</td><td>passed</td><td>Header presence and diagnostic disclosure checked</td></tr><tr><td>GET /orders/{order_id}</td><td>injection</td><td>skipped</td><td>Select injection_parameters in the request fixture</td></tr><tr><td>GET /orders/{order_id}</td><td>rate_limit</td><td>skipped</td><td>Enable rate_limit for an explicit request fixture</td></tr><tr><td>GET /search</td><td>auth</td><td>passed</td><td>Authenticated control succeeded; anonymous read denied</td></tr><tr><td>GET /search</td><td>bola</td><td>skipped</td><td>BOLA needs a GET operation and explicit private-object fixtures</td></tr><tr><td>GET /search</td><td>cors</td><td>passed</td><td>No tested credentialed-origin misconfiguration observed</td></tr><tr><td>GET /search</td><td>headers</td><td>passed</td><td>Header presence and diagnostic disclosure checked</td></tr><tr><td>GET /search</td><td>injection</td><td>passed</td><td>No configured injection signal was observed</td></tr><tr><td>GET /search</td><td>rate_limit</td><td>passed</td><td>HTTP 429 throttling observed in the tested burst</td></tr></tbody></table><h2>Limitations and scan errors</h2><ul><li>DEMONSTRATION: all responses are synthetic in-process fixtures; no live API was scanned.</li><li>Automated checks cover selected risks, not the entire OWASP API Top 10.</li><li>Passed means the configured test observed expected behavior; it is not a security guarantee.</li><li>BOLA coverage is limited to declared private fixtures and GET object reads.</li><li>A 50-request burst cannot establish the absence of all rate limits.</li><li>Timing and syntax findings need manual validation; database dialects vary.</li></ul>
+<footer><p class="label">Scan 6e9e9140-708a-4927-aa13-a3505110f5a9 · Schema 1.0.0</p></footer>
+</main></body></html>

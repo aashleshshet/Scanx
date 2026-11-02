@@ -1,0 +1,360 @@
+{
+  "schema_version": "1.0.0",
+  "tool_version": "0.1.0",
+  "scan_id": "6e9e9140-708a-4927-aa13-a3505110f5a9",
+  "started_at": "2026-11-02T14:26:47.078716Z",
+  "finished_at": "2026-11-02T14:26:47.323820Z",
+  "target": "https://synthetic-api.invalid",
+  "spec_sha256": "d593a6ec8f56ffaf384c0bfb930f5e891eee92062a9ca018d4846eafdd1cb8b0",
+  "status": "complete",
+  "modules": [
+    "bola",
+    "auth",
+    "headers",
+    "cors",
+    "injection",
+    "rate_limit"
+  ],
+  "operations_discovered": 3,
+  "operations_scheduled": 3,
+  "requests_sent": 73,
+  "summary": {
+    "Critical": 0,
+    "High": 0,
+    "Medium": 0,
+    "Low": 0
+  },
+  "checks": [
+    {
+      "module": "auth",
+      "operation": "GET /health",
+      "status": "passed",
+      "reason": "Public route behavior inventoried; authentication is not required by policy",
+      "findings": [],
+      "observations": {
+        "auth_expected": false,
+        "anonymous": {
+          "status": 200,
+          "elapsed_ms": 0.19,
+          "error": null,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "module": "bola",
+      "operation": "GET /health",
+      "status": "skipped",
+      "reason": "BOLA needs a GET operation and explicit private-object fixtures",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "cors",
+      "operation": "GET /health",
+      "status": "passed",
+      "reason": "No tested credentialed-origin misconfiguration observed",
+      "findings": [],
+      "observations": {
+        "responses": [
+          {
+            "status": 200,
+            "elapsed_ms": 0.1,
+            "error": null,
+            "truncated": false
+          },
+          {
+            "status": 200,
+            "elapsed_ms": 0.11,
+            "error": null,
+            "truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "module": "headers",
+      "operation": "GET /health",
+      "status": "passed",
+      "reason": "Header presence and diagnostic disclosure checked",
+      "findings": [],
+      "observations": {
+        "response": {
+          "status": 200,
+          "elapsed_ms": 0.1,
+          "error": null,
+          "truncated": false
+        },
+        "missing_headers": [
+          "content-security-policy",
+          "x-frame-options"
+        ],
+        "html_response": false
+      }
+    },
+    {
+      "module": "injection",
+      "operation": "GET /health",
+      "status": "skipped",
+      "reason": "Select injection_parameters in the request fixture",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "rate_limit",
+      "operation": "GET /health",
+      "status": "skipped",
+      "reason": "Enable rate_limit for an explicit request fixture",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "auth",
+      "operation": "GET /orders/{order_id}",
+      "status": "passed",
+      "reason": "Authenticated control succeeded; anonymous read denied",
+      "findings": [],
+      "observations": {
+        "auth_expected": true,
+        "anonymous": {
+          "status": 401,
+          "elapsed_ms": 0.07,
+          "error": null,
+          "truncated": false
+        },
+        "authenticated": {
+          "status": 200,
+          "elapsed_ms": 0.1,
+          "error": null,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "module": "bola",
+      "operation": "GET /orders/{order_id}",
+      "status": "passed",
+      "reason": "Both configured cross-user reads were denied",
+      "findings": [],
+      "observations": {
+        "owner_a": {
+          "status": 200,
+          "elapsed_ms": 0.23,
+          "error": null,
+          "truncated": false
+        },
+        "owner_b": {
+          "status": 200,
+          "elapsed_ms": 0.15,
+          "error": null,
+          "truncated": false
+        },
+        "anonymous_a": {
+          "status": 401,
+          "elapsed_ms": 0.08,
+          "error": null,
+          "truncated": false
+        },
+        "anonymous_b": {
+          "status": 401,
+          "elapsed_ms": 0.07,
+          "error": null,
+          "truncated": false
+        },
+        "B_accesses_A": {
+          "status": 403,
+          "elapsed_ms": 0.09,
+          "error": null,
+          "truncated": false
+        },
+        "A_accesses_B": {
+          "status": 403,
+          "elapsed_ms": 0.08,
+          "error": null,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "module": "cors",
+      "operation": "GET /orders/{order_id}",
+      "status": "passed",
+      "reason": "No tested credentialed-origin misconfiguration observed",
+      "findings": [],
+      "observations": {
+        "responses": [
+          {
+            "status": 200,
+            "elapsed_ms": 0.16,
+            "error": null,
+            "truncated": false
+          },
+          {
+            "status": 200,
+            "elapsed_ms": 0.09,
+            "error": null,
+            "truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "module": "headers",
+      "operation": "GET /orders/{order_id}",
+      "status": "passed",
+      "reason": "Header presence and diagnostic disclosure checked",
+      "findings": [],
+      "observations": {
+        "response": {
+          "status": 200,
+          "elapsed_ms": 0.09,
+          "error": null,
+          "truncated": false
+        },
+        "missing_headers": [
+          "content-security-policy",
+          "x-frame-options"
+        ],
+        "html_response": false
+      }
+    },
+    {
+      "module": "injection",
+      "operation": "GET /orders/{order_id}",
+      "status": "skipped",
+      "reason": "Select injection_parameters in the request fixture",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "rate_limit",
+      "operation": "GET /orders/{order_id}",
+      "status": "skipped",
+      "reason": "Enable rate_limit for an explicit request fixture",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "auth",
+      "operation": "GET /search",
+      "status": "passed",
+      "reason": "Authenticated control succeeded; anonymous read denied",
+      "findings": [],
+      "observations": {
+        "auth_expected": true,
+        "anonymous": {
+          "status": 401,
+          "elapsed_ms": 0.21,
+          "error": null,
+          "truncated": false
+        },
+        "authenticated": {
+          "status": 200,
+          "elapsed_ms": 0.29,
+          "error": null,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "module": "bola",
+      "operation": "GET /search",
+      "status": "skipped",
+      "reason": "BOLA needs a GET operation and explicit private-object fixtures",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "cors",
+      "operation": "GET /search",
+      "status": "passed",
+      "reason": "No tested credentialed-origin misconfiguration observed",
+      "findings": [],
+      "observations": {
+        "responses": [
+          {
+            "status": 200,
+            "elapsed_ms": 0.09,
+            "error": null,
+            "truncated": false
+          },
+          {
+            "status": 200,
+            "elapsed_ms": 0.11,
+            "error": null,
+            "truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "module": "headers",
+      "operation": "GET /search",
+      "status": "passed",
+      "reason": "Header presence and diagnostic disclosure checked",
+      "findings": [],
+      "observations": {
+        "response": {
+          "status": 200,
+          "elapsed_ms": 0.09,
+          "error": null,
+          "truncated": false
+        },
+        "missing_headers": [
+          "content-security-policy",
+          "x-frame-options"
+        ],
+        "html_response": false
+      }
+    },
+    {
+      "module": "injection",
+      "operation": "GET /search",
+      "status": "passed",
+      "reason": "No configured injection signal was observed",
+      "findings": [],
+      "observations": {
+        "baseline": {
+          "status": 200,
+          "elapsed_ms": 0.1,
+          "error": null,
+          "truncated": false
+        },
+        "experiments": [
+          {
+            "parameter": "q",
+            "syntax_probe": {
+              "status": 200,
+              "elapsed_ms": 0.13,
+              "error": null,
+              "truncated": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "module": "rate_limit",
+      "operation": "GET /search",
+      "status": "passed",
+      "reason": "HTTP 429 throttling observed in the tested burst",
+      "findings": [],
+      "observations": {
+        "burst_size": 50,
+        "http_429_count": 37,
+        "successful": 13,
+        "errors": 0,
+        "max_concurrency": 8
+      }
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "DEMONSTRATION: all responses are synthetic in-process fixtures; no live API was scanned.",
+    "Automated checks cover selected risks, not the entire OWASP API Top 10.",
+    "Passed means the configured test observed expected behavior; it is not a security guarantee.",
+    "BOLA coverage is limited to declared private fixtures and GET object reads.",
+    "A 50-request burst cannot establish the absence of all rate limits.",
+    "Timing and syntax findings need manual validation; database dialects vary."
+  ]
+}
