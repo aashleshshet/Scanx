@@ -1,0 +1,636 @@
+{
+  "schema_version": "1.0.0",
+  "tool_version": "0.1.0",
+  "scan_id": "adccf34c-6d12-4e74-8064-66a63854e169",
+  "started_at": "2026-11-02T14:26:47.078715Z",
+  "finished_at": "2026-11-02T14:26:47.345677Z",
+  "target": "https://synthetic-api.invalid",
+  "spec_sha256": "d593a6ec8f56ffaf384c0bfb930f5e891eee92062a9ca018d4846eafdd1cb8b0",
+  "status": "complete",
+  "modules": [
+    "bola",
+    "auth",
+    "headers",
+    "cors",
+    "injection",
+    "rate_limit"
+  ],
+  "operations_discovered": 3,
+  "operations_scheduled": 3,
+  "requests_sent": 75,
+  "summary": {
+    "Critical": 0,
+    "High": 2,
+    "Medium": 1,
+    "Low": 7
+  },
+  "checks": [
+    {
+      "module": "auth",
+      "operation": "GET /health",
+      "status": "passed",
+      "reason": "Public route behavior inventoried; authentication is not required by policy",
+      "findings": [],
+      "observations": {
+        "auth_expected": false,
+        "anonymous": {
+          "status": 200,
+          "elapsed_ms": 0.17,
+          "error": null,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "module": "bola",
+      "operation": "GET /health",
+      "status": "skipped",
+      "reason": "BOLA needs a GET operation and explicit private-object fixtures",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "cors",
+      "operation": "GET /health",
+      "status": "failed",
+      "reason": "CORS policy needs review",
+      "findings": [
+        {
+          "id": "079228fb-1dc9-48b4-8206-199649f42c86",
+          "rule_id": "CORS-001",
+          "module": "cors",
+          "title": "Wildcard origin with credentials",
+          "severity": "Low",
+          "confidence": "high",
+          "verification": "needs_review",
+          "operation": "GET /health",
+          "description": "Access-Control-Allow-Origin: * combined with credentials is an invalid credentialed CORS policy; browsers block credentialed response access.",
+          "evidence": {
+            "wildcard_with_credentials": true,
+            "two_origins_reflected_with_credentials": false
+          },
+          "remediation": "Use an explicit trusted-origin allowlist and Vary: Origin. Enable credentialed CORS only when required. Never reflect arbitrary Origin values.",
+          "owasp": [
+            "API8:2023"
+          ],
+          "cwe": [
+            "CWE-942"
+          ]
+        }
+      ],
+      "observations": {
+        "responses": [
+          {
+            "status": 200,
+            "elapsed_ms": 0.1,
+            "error": null,
+            "truncated": false
+          },
+          {
+            "status": 200,
+            "elapsed_ms": 0.1,
+            "error": null,
+            "truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "module": "headers",
+      "operation": "GET /health",
+      "status": "failed",
+      "reason": "Header presence and diagnostic disclosure checked",
+      "findings": [
+        {
+          "id": "04a57724-4ab3-4f53-9d25-4d93224ec5ba",
+          "rule_id": "HEADERS-001",
+          "module": "headers",
+          "title": "Applicable browser security headers missing",
+          "severity": "Low",
+          "confidence": "high",
+          "verification": "needs_review",
+          "operation": "GET /health",
+          "description": "Response lacks one or more defense-in-depth headers relevant to its context.",
+          "evidence": {
+            "missing_applicable_headers": [
+              "Strict-Transport-Security"
+            ],
+            "html_response": false
+          },
+          "remediation": "Set HSTS on HTTPS responses after validating HTTPS coverage. For rendered HTML, deploy a restrictive CSP including frame-ancestors; use X-Frame-Options where legacy compatibility is needed.",
+          "owasp": [
+            "API8:2023"
+          ],
+          "cwe": [
+            "CWE-693"
+          ]
+        }
+      ],
+      "observations": {
+        "response": {
+          "status": 200,
+          "elapsed_ms": 0.12,
+          "error": null,
+          "truncated": false
+        },
+        "missing_headers": [
+          "strict-transport-security",
+          "content-security-policy",
+          "x-frame-options"
+        ],
+        "html_response": false
+      }
+    },
+    {
+      "module": "injection",
+      "operation": "GET /health",
+      "status": "skipped",
+      "reason": "Select injection_parameters in the request fixture",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "rate_limit",
+      "operation": "GET /health",
+      "status": "skipped",
+      "reason": "Enable rate_limit for an explicit request fixture",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "auth",
+      "operation": "GET /orders/{order_id}",
+      "status": "passed",
+      "reason": "Authenticated control succeeded; anonymous read denied",
+      "findings": [],
+      "observations": {
+        "auth_expected": true,
+        "anonymous": {
+          "status": 401,
+          "elapsed_ms": 0.08,
+          "error": null,
+          "truncated": false
+        },
+        "authenticated": {
+          "status": 200,
+          "elapsed_ms": 0.17,
+          "error": null,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "module": "bola",
+      "operation": "GET /orders/{order_id}",
+      "status": "failed",
+      "reason": "Private object disclosure reproduced across principals",
+      "findings": [
+        {
+          "id": "8b76e7d7-5e47-4d86-b28e-e61497533ef7",
+          "rule_id": "BOLA-001",
+          "module": "bola",
+          "title": "Cross-user access to a private object",
+          "severity": "High",
+          "confidence": "high",
+          "verification": "confirmed",
+          "operation": "GET /orders/{order_id}",
+          "description": "A different authenticated principal received the owner's complete JSON representation of an explicitly declared private object.",
+          "evidence": {
+            "direction": "B_accesses_A",
+            "parameter_location": "path",
+            "parameter_name": "order_id",
+            "owner_status": 200,
+            "cross_user_status": 200,
+            "identity_marker_matches": true,
+            "owner_recheck_matches": true,
+            "representations_equal": true,
+            "anonymous_statuses": [
+              401,
+              401
+            ]
+          },
+          "remediation": "Authorize each object lookup against the authenticated principal and tenant. Enforce ownership/ACL policy in the data-access layer; add cross-user regression tests. UUIDs do not replace authorization.",
+          "owasp": [
+            "API1:2023"
+          ],
+          "cwe": [
+            "CWE-639"
+          ]
+        },
+        {
+          "id": "8453cff9-95d6-416d-9f23-8d3c56f5cd7e",
+          "rule_id": "BOLA-001",
+          "module": "bola",
+          "title": "Cross-user access to a private object",
+          "severity": "High",
+          "confidence": "high",
+          "verification": "confirmed",
+          "operation": "GET /orders/{order_id}",
+          "description": "A different authenticated principal received the owner's complete JSON representation of an explicitly declared private object.",
+          "evidence": {
+            "direction": "A_accesses_B",
+            "parameter_location": "path",
+            "parameter_name": "order_id",
+            "owner_status": 200,
+            "cross_user_status": 200,
+            "identity_marker_matches": true,
+            "owner_recheck_matches": true,
+            "representations_equal": true,
+            "anonymous_statuses": [
+              401,
+              401
+            ]
+          },
+          "remediation": "Authorize each object lookup against the authenticated principal and tenant. Enforce ownership/ACL policy in the data-access layer; add cross-user regression tests. UUIDs do not replace authorization.",
+          "owasp": [
+            "API1:2023"
+          ],
+          "cwe": [
+            "CWE-639"
+          ]
+        }
+      ],
+      "observations": {
+        "owner_a": {
+          "status": 200,
+          "elapsed_ms": 0.24,
+          "error": null,
+          "truncated": false
+        },
+        "owner_b": {
+          "status": 200,
+          "elapsed_ms": 0.15,
+          "error": null,
+          "truncated": false
+        },
+        "anonymous_a": {
+          "status": 401,
+          "elapsed_ms": 0.11,
+          "error": null,
+          "truncated": false
+        },
+        "anonymous_b": {
+          "status": 401,
+          "elapsed_ms": 0.07,
+          "error": null,
+          "truncated": false
+        },
+        "B_accesses_A": {
+          "status": 200,
+          "elapsed_ms": 0.1,
+          "error": null,
+          "truncated": false
+        },
+        "B_accesses_A_owner_recheck": {
+          "status": 200,
+          "elapsed_ms": 0.09,
+          "error": null,
+          "truncated": false
+        },
+        "A_accesses_B": {
+          "status": 200,
+          "elapsed_ms": 0.09,
+          "error": null,
+          "truncated": false
+        },
+        "A_accesses_B_owner_recheck": {
+          "status": 200,
+          "elapsed_ms": 0.11,
+          "error": null,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "module": "cors",
+      "operation": "GET /orders/{order_id}",
+      "status": "failed",
+      "reason": "CORS policy needs review",
+      "findings": [
+        {
+          "id": "55e7210a-6fbd-42da-b9ec-a0398b516b0b",
+          "rule_id": "CORS-001",
+          "module": "cors",
+          "title": "Wildcard origin with credentials",
+          "severity": "Low",
+          "confidence": "high",
+          "verification": "needs_review",
+          "operation": "GET /orders/{order_id}",
+          "description": "Access-Control-Allow-Origin: * combined with credentials is an invalid credentialed CORS policy; browsers block credentialed response access.",
+          "evidence": {
+            "wildcard_with_credentials": true,
+            "two_origins_reflected_with_credentials": false
+          },
+          "remediation": "Use an explicit trusted-origin allowlist and Vary: Origin. Enable credentialed CORS only when required. Never reflect arbitrary Origin values.",
+          "owasp": [
+            "API8:2023"
+          ],
+          "cwe": [
+            "CWE-942"
+          ]
+        }
+      ],
+      "observations": {
+        "responses": [
+          {
+            "status": 200,
+            "elapsed_ms": 0.12,
+            "error": null,
+            "truncated": false
+          },
+          {
+            "status": 200,
+            "elapsed_ms": 0.11,
+            "error": null,
+            "truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "module": "headers",
+      "operation": "GET /orders/{order_id}",
+      "status": "failed",
+      "reason": "Header presence and diagnostic disclosure checked",
+      "findings": [
+        {
+          "id": "5c87c0d3-b254-4bdd-b796-63bbc6a6b176",
+          "rule_id": "HEADERS-001",
+          "module": "headers",
+          "title": "Applicable browser security headers missing",
+          "severity": "Low",
+          "confidence": "high",
+          "verification": "needs_review",
+          "operation": "GET /orders/{order_id}",
+          "description": "Response lacks one or more defense-in-depth headers relevant to its context.",
+          "evidence": {
+            "missing_applicable_headers": [
+              "Strict-Transport-Security"
+            ],
+            "html_response": false
+          },
+          "remediation": "Set HSTS on HTTPS responses after validating HTTPS coverage. For rendered HTML, deploy a restrictive CSP including frame-ancestors; use X-Frame-Options where legacy compatibility is needed.",
+          "owasp": [
+            "API8:2023"
+          ],
+          "cwe": [
+            "CWE-693"
+          ]
+        }
+      ],
+      "observations": {
+        "response": {
+          "status": 200,
+          "elapsed_ms": 0.1,
+          "error": null,
+          "truncated": false
+        },
+        "missing_headers": [
+          "strict-transport-security",
+          "content-security-policy",
+          "x-frame-options"
+        ],
+        "html_response": false
+      }
+    },
+    {
+      "module": "injection",
+      "operation": "GET /orders/{order_id}",
+      "status": "skipped",
+      "reason": "Select injection_parameters in the request fixture",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "rate_limit",
+      "operation": "GET /orders/{order_id}",
+      "status": "skipped",
+      "reason": "Enable rate_limit for an explicit request fixture",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "auth",
+      "operation": "GET /search",
+      "status": "passed",
+      "reason": "Authenticated control succeeded; anonymous read denied",
+      "findings": [],
+      "observations": {
+        "auth_expected": true,
+        "anonymous": {
+          "status": 401,
+          "elapsed_ms": 0.21,
+          "error": null,
+          "truncated": false
+        },
+        "authenticated": {
+          "status": 200,
+          "elapsed_ms": 0.3,
+          "error": null,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "module": "bola",
+      "operation": "GET /search",
+      "status": "skipped",
+      "reason": "BOLA needs a GET operation and explicit private-object fixtures",
+      "findings": [],
+      "observations": {}
+    },
+    {
+      "module": "cors",
+      "operation": "GET /search",
+      "status": "failed",
+      "reason": "CORS policy needs review",
+      "findings": [
+        {
+          "id": "b2e80650-ee33-4f5c-a62f-da8039301394",
+          "rule_id": "CORS-001",
+          "module": "cors",
+          "title": "Wildcard origin with credentials",
+          "severity": "Low",
+          "confidence": "high",
+          "verification": "needs_review",
+          "operation": "GET /search",
+          "description": "Access-Control-Allow-Origin: * combined with credentials is an invalid credentialed CORS policy; browsers block credentialed response access.",
+          "evidence": {
+            "wildcard_with_credentials": true,
+            "two_origins_reflected_with_credentials": false
+          },
+          "remediation": "Use an explicit trusted-origin allowlist and Vary: Origin. Enable credentialed CORS only when required. Never reflect arbitrary Origin values.",
+          "owasp": [
+            "API8:2023"
+          ],
+          "cwe": [
+            "CWE-942"
+          ]
+        }
+      ],
+      "observations": {
+        "responses": [
+          {
+            "status": 200,
+            "elapsed_ms": 0.12,
+            "error": null,
+            "truncated": false
+          },
+          {
+            "status": 200,
+            "elapsed_ms": 0.12,
+            "error": null,
+            "truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "module": "headers",
+      "operation": "GET /search",
+      "status": "failed",
+      "reason": "Header presence and diagnostic disclosure checked",
+      "findings": [
+        {
+          "id": "26da6b68-b933-4626-a3a1-1d3a1543b0ad",
+          "rule_id": "HEADERS-001",
+          "module": "headers",
+          "title": "Applicable browser security headers missing",
+          "severity": "Low",
+          "confidence": "high",
+          "verification": "needs_review",
+          "operation": "GET /search",
+          "description": "Response lacks one or more defense-in-depth headers relevant to its context.",
+          "evidence": {
+            "missing_applicable_headers": [
+              "Strict-Transport-Security"
+            ],
+            "html_response": false
+          },
+          "remediation": "Set HSTS on HTTPS responses after validating HTTPS coverage. For rendered HTML, deploy a restrictive CSP including frame-ancestors; use X-Frame-Options where legacy compatibility is needed.",
+          "owasp": [
+            "API8:2023"
+          ],
+          "cwe": [
+            "CWE-693"
+          ]
+        }
+      ],
+      "observations": {
+        "response": {
+          "status": 200,
+          "elapsed_ms": 0.11,
+          "error": null,
+          "truncated": false
+        },
+        "missing_headers": [
+          "strict-transport-security",
+          "content-security-policy",
+          "x-frame-options"
+        ],
+        "html_response": false
+      }
+    },
+    {
+      "module": "injection",
+      "operation": "GET /search",
+      "status": "failed",
+      "reason": "Injection signals need manual validation",
+      "findings": [
+        {
+          "id": "2b073b71-2bc0-4086-861a-5156a8d741ee",
+          "rule_id": "INJECTION-SQL-SYNTAX",
+          "module": "injection",
+          "title": "Possible sql injection (syntax signal)",
+          "severity": "Medium",
+          "confidence": "medium",
+          "verification": "needs_review",
+          "operation": "GET /search",
+          "description": "A controlled payload introduced a diagnostic or repeatable delay absent from control requests. This is a candidate finding, not proof of arbitrary execution.",
+          "evidence": {
+            "parameter_name": "q",
+            "probe_kind": "syntax",
+            "new_error_signature": true,
+            "baseline_status": 200,
+            "probe_status": 500
+          },
+          "remediation": "Use parameterized queries and bind variables; avoid SQL string concatenation.",
+          "owasp": [
+            "API8:2023"
+          ],
+          "cwe": [
+            "CWE-89"
+          ]
+        }
+      ],
+      "observations": {
+        "baseline": {
+          "status": 200,
+          "elapsed_ms": 0.09,
+          "error": null,
+          "truncated": false
+        },
+        "experiments": [
+          {
+            "parameter": "q",
+            "syntax_probe": {
+              "status": 500,
+              "elapsed_ms": 0.24,
+              "error": null,
+              "truncated": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "module": "rate_limit",
+      "operation": "GET /search",
+      "status": "inconclusive",
+      "reason": "No throttling observed within this 50-request window",
+      "findings": [
+        {
+          "id": "a7363e3d-7aa5-40cb-b1f4-881fbeee0cda",
+          "rule_id": "RATE-001",
+          "module": "rate_limit",
+          "title": "No rate limit observed in a 50-request burst",
+          "severity": "Low",
+          "confidence": "low",
+          "verification": "needs_review",
+          "operation": "GET /search",
+          "description": "All 50 requests succeeded. A higher threshold, longer time window, other limiting mechanism, or intentional policy can explain this result.",
+          "evidence": {
+            "burst_size": 50,
+            "http_429_count": 0,
+            "successful": 50,
+            "errors": 0,
+            "max_concurrency": 8
+          },
+          "remediation": "Define per-principal and per-route quotas, bounded resource consumption, and observable throttling. Validate the documented thresholds in staging.",
+          "owasp": [
+            "API4:2023"
+          ],
+          "cwe": [
+            "CWE-770"
+          ]
+        }
+      ],
+      "observations": {
+        "burst_size": 50,
+        "http_429_count": 0,
+        "successful": 50,
+        "errors": 0,
+        "max_concurrency": 8
+      }
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "DEMONSTRATION: all responses are synthetic in-process fixtures; no live API was scanned.",
+    "Automated checks cover selected risks, not the entire OWASP API Top 10.",
+    "Passed means the configured test observed expected behavior; it is not a security guarantee.",
+    "BOLA coverage is limited to declared private fixtures and GET object reads.",
+    "A 50-request burst cannot establish the absence of all rate limits.",
+    "Timing and syntax findings need manual validation; database dialects vary."
+  ]
+}

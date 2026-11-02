@@ -11,9 +11,14 @@ dependencies = ["httpx>=0.27,<0.29", "PyYAML>=6.0.2,<7", "pydantic>=2.10,<3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "jsonschema>=4.23,<5", "ruff>=0.9,<1"]
+web = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1"]
 
 [project.scripts]
 api-sentry = "api_sentry.cli:main"
+scanx-web = "api_sentry.web.server:main"
+
+[tool.setuptools.package-data]
+"api_sentry.web" = ["static/*"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

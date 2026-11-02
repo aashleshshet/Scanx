@@ -1,8 +1,27 @@
 # Scanx
 
-Scanx is a Python 3.11+ CLI (installed as `api-sentry`) for specification-driven REST API security testing. It includes a bounded async engine, a complete paired-user BOLA module, focused authentication/header/CORS/injection/rate checks, and versioned JSON plus executive Markdown/HTML reports.
+Scanx is a Python 3.11+ web application and CLI (installed as `api-sentry`) for specification-driven REST API security testing. It includes a bounded async engine, a complete paired-user BOLA module, focused authentication/header/CORS/injection/rate checks, and versioned JSON plus executive Markdown/HTML reports.
 
 Use it against APIs you are authorized to test. Start with seeded test accounts and private fixture objects in a staging environment. This is a tested portfolio foundation with explicit coverage limits; production readiness also depends on the target API's authorization policy, deployment constraints and integration tests.
+
+## Website and beginner guide
+
+[Open the hosted workspace](https://scanx-api-security.bonnypaint4.chatgpt.site) · [How to use](https://scanx-api-security.bonnypaint4.chatgpt.site/how-to-use.html)
+
+The hosted site is owner-private and provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports. Live scans run in the optional local Python server, using the same dashboard:
+
+```bash
+# From the cloned repository, with your virtual environment active:
+python -m pip install -e '.[web]'
+scanx-web --target https://your-api.example/v1
+# Open http://127.0.0.1:8765
+```
+
+Replace the placeholder with an API root you are authorized to test. Repeat `--target` for additional roots. Click **New scan**, upload your specification and scenario fixtures, choose an authentication scheme, and supply separate test-user credentials. Injection and rate tests require selecting their checkboxes. Web scans use read-only methods, a 500-request budget, and a 180-second deadline.
+
+The server is a single-operator loopback tool, not an internet-facing multi-user service. It rejects unconfigured targets and cross-origin changes, keeps at most 20 jobs in memory, and redacts credentials from reports. History clears on restart. The hosted explorer never sends scan traffic; imported reports remain in the current tab. Download JSON to preserve an assessment.
+
+The beginner walkthrough is also included at `src/api_sentry/web/static/how-to-use.html`. The shared frontend lives under `src/api_sentry/web/static/`; `web/server.py` provides the local API. Run `python tools/build_site.py` to copy the hosted static assets into `work/scanx-site/dist`.
 
 ## Project structure
 
@@ -44,7 +63,7 @@ git clone https://github.com/aashleshshet/Scanx.git
 cd Scanx
 python3.11 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e '.[dev]'
+python -m pip install -e '.[dev,web]'
 
 # Inspect parsed operations, parameters, security requirements and auth scheme locations.
 api-sentry inspect --spec examples/openapi.yaml
@@ -190,3 +209,7 @@ The writer additionally redacts supplied credential values, escapes all untruste
 5. Add authentication lifecycle support, configurable expected rate policies and policy-aware CI coverage thresholds.
 
 Commit a resolved dependency lock for your chosen Python/platform and validate it in CI before releasing. The project specifies bounded dependency ranges; it does not claim a reproducible locked supply chain or complete OWASP Top 10 coverage. The included workflow runs lint, formatting and tests across Python 3.11–3.13; execution in this workspace is documented separately in `VALIDATION.md`.
+
+## Copyright
+
+Copyright © 2026 Aashlesh Shet. All rights reserved. See [COPYRIGHT](COPYRIGHT). Third-party dependencies retain their respective licenses. This repository currently does not grant an open-source license.

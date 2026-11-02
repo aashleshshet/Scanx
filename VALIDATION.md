@@ -1,18 +1,18 @@
 # Validation record
 
-Validated on 2 November 2026 with Python 3.12 on macOS ARM64. All scanner tests use `httpx.MockTransport` or synthetic observations. No live API was scanned.
+Validated on 2 November 2026 with Python 3.12 on macOS ARM64. All scanner tests use `httpx.MockTransport` or synthetic observations. The web UI was also exercised against a synthetic HTTP API on loopback; no external API was scanned.
 
 | Check | Result |
 |---|---|
-| `pytest -q` | 52 passed |
+| `pytest -q` | 58 passed |
 | `ruff check .` | Passed |
-| `ruff format --check .` | Passed; 26 Python files |
+| `ruff format --check .` | Passed |
 | Package build/install | Wheel built and installed into an isolated temporary target |
 | Installed CLI | Help, specification inspection and schema generation smoke checks |
 | Generated JSON Schema | Draft 2020-12 schema validated |
 | Sample JSON reports | Both validated against schema, including timestamp formats and summary counts |
 | HTML/Markdown handling | Escaping and redaction tests passed; no scripts or remote images in sample HTML |
-| HTML visual preview | Not performed: browser policy blocked the local-file URL |
+| Web visual preview | HTTP browser preview, filters, sample switching, details, local scan and JSON export checked |
 
 Tests cover numeric and UUID IDs in path/query locations; bidirectional private-object disclosure; protected, public and ambiguous responses; identical effective credentials; authentication scheme composition; cookie isolation; redirect suppression; origin/base-prefix handling; bounded responses; compressed-response rejection; input aliases/duplicates/deep nesting; request budgets; cancellation/deadlines; explicit write/probe opt-ins; burst count/concurrency; syntax/timing signal classification; report validation/escaping/redaction/file permissions; and CI exit codes.
 
@@ -40,3 +40,7 @@ The vulnerable fixture exposes both cross-user object directions, a simulated SQ
 | setuptools | 84.1.0 |
 
 The GitHub Actions matrix is configured for Python 3.11, 3.12 and 3.13. Only Python 3.12 was executed in this workspace. Dependency ranges in `pyproject.toml` are not a platform-specific lockfile; resolve and commit one for a release environment.
+
+## Web application validation
+
+The additional six tests cover allowed targets, host/origin restrictions, upload limits, validation error redaction, explicit per-job credentials, downloads, cancellation, concurrency, and sample report schemas. A browser-driven assessment against a synthetic local server completed 22 requests across 3 operations and 4 modules, producing two expected High BOLA findings. Browser console had no errors. The beginner walkthrough and copyright pages were added on 3 November 2026.

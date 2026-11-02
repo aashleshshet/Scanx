@@ -1,0 +1,35 @@
+# Values are fixture data; all actual credentials come from the process environment.
+identities:
+  A:
+    bearerAuth:
+      env: API_SENTRY_TOKEN_A
+  B:
+    bearerAuth:
+      env: API_SENTRY_TOKEN_B
+requests:
+  - operation: GET /orders/{order_id}
+    identity: A
+    values:
+      path:
+        order_id: 101
+  - operation: GET /search
+    identity: A
+    values:
+      query:
+        q: notebook
+    injection_parameters:
+      - location: query
+        name: q
+    rate_limit: true
+bola:
+  - operation: GET /orders/{order_id}
+    parameter:
+      location: path
+      name: order_id
+    object_a: '101'
+    object_b: '202'
+    identity_a: A
+    identity_b: B
+    identity_pointer: /id
+    # This is an assertion of the test fixture's intended access policy.
+    private_objects: true

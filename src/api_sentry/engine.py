@@ -29,6 +29,7 @@ async def scan(
     checks: list[Check],
     spec_sha256: str,
     transport: httpx.AsyncBaseTransport | None = None,
+    credentials: dict[str, dict[str, str]] | None = None,
 ) -> ScanReport:
     target = normalize_base_url(base_url)
     report = ScanReport(
@@ -39,7 +40,7 @@ async def scan(
         operations_discovered=len(operations),
         operations_scheduled=len(operations),
     )
-    credentials = scenarios.credentials()
+    credentials = scenarios.credentials() if credentials is None else credentials
     limits = httpx.Limits(
         max_connections=settings.concurrency, max_keepalive_connections=settings.concurrency
     )
