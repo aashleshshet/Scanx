@@ -8,7 +8,7 @@ Use it against APIs you are authorized to test. Start with seeded test accounts 
 
 [Open the hosted workspace](https://scanx-api-security.bonnypaint4.chatgpt.site) · [How to use](https://scanx-api-security.bonnypaint4.chatgpt.site/how-to-use.html)
 
-The hosted site is owner-private and provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports. Live scans run in the optional local Python server, using the same dashboard:
+The hosted site is public, requires no sign-in, and provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports. Live scans run in the optional local Python server, using the same dashboard:
 
 ```bash
 # From the cloned repository, with your virtual environment active:
