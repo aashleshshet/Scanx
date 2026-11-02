@@ -213,3 +213,7 @@ Commit a resolved dependency lock for your chosen Python/platform and validate i
 ## Copyright
 
 Copyright © 2026 Aashlesh Shet. All rights reserved. See [COPYRIGHT](COPYRIGHT). Third-party dependencies retain their respective licenses. This repository currently does not grant an open-source license.
+
+## Android APK
+
+[Download Scanx 1.0.0 for Android](android/downloads/scanx-1.0.0.apk) (Android 11+). The APK bundles the liquid-glass report explorer, examples, and guide offline without sign-in. Import and export reports using Android's file picker. Live scans still require the Python runner. This is a locally signed testing build; see [Android setup and build instructions](android/README.md).
