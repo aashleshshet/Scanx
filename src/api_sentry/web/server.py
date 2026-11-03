@@ -79,7 +79,9 @@ def create_app(targets: list[str] | None = None, *, runner=scan) -> FastAPI:
             task.cancel()
         await asyncio.gather(*pending, return_exceptions=True)
 
-    app = FastAPI(title="OnescanX", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
+    app = FastAPI(
+        title="OnescanX", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan
+    )
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "[::1]"])
 
     @app.middleware("http")
