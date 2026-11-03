@@ -1,28 +1,28 @@
-# Hosted verified-email workspace
+# Hosted workspace with Vercel login
 
-The Next.js application serves the shared liquid-glass frontend at `/workspace/index.html`. Clerk manages sign-up, email verification, sessions, and sign-out. Any account with a **verified primary email** can access the workspace; there is no email allowlist. Both session and primary-email verification are checked on the server for every workspace asset, including HTML and JSON. Responses are private/no-store. Files are read only from the shared frontend directory using a restricted filename policy.
+Production: https://scanx-eight.vercel.app
 
-## Vercel setup
+The Next.js application serves the shared liquid-glass frontend at `/workspace/index.html`. **Vercel Deployment Protection is the only authentication layer.** Keep Vercel Authentication enabled for every domain serving this app. The current `all_except_custom_domains` policy protects its Vercel URLs; explicitly protect any custom domain before adding it. Do not turn protection off: the application intentionally contains no second login gate.
 
-Project: `scanx`, team: `aashlesh-ramadas-shet`. Install the Clerk integration and connect its resource to the project. Required variables for Preview and Production:
+Vercel decides which accounts may access the project. This is not open registration for anyone with a verified email. Manage visitor access in Vercel. Clerk is no longer used: its package, provider, middleware, email checks, and sign-in/sign-up/account screens have been removed. Existing Clerk integration resources or credentials are not consumed by the app; remove the integration separately if it is no longer needed by any project.
 
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-- `CLERK_SECRET_KEY`
+## Build and develop
 
-In Clerk, enable email sign-up/sign-in and require email verification. Enable email-code authentication if passwordless login is desired. Disable social providers and phone authentication if the UI should offer email only. The server independently rejects accounts without a verified primary email, regardless of enabled provider options. Production Clerk instances may require domain configuration in the Clerk dashboard.
+Use Node 22+ and pnpm 10.11.0:
 
-Deploy using Node 22, `pnpm install --frozen-lockfile`, and `pnpm build`. The project has application authentication; Vercel account authentication must not be required for production visitors. Never publish shared frontend assets separately as a public static directory when authentication is required.
+```sh
+pnpm install --frozen-lockfile
+pnpm test
+pnpm build
+pnpm dev
+```
 
-## Local development
+No application authentication keys are required. Local development is unauthenticated and intended for the operator's machine. Deploy using the Next.js framework preset with `pnpm build`. Never publish the frontend or deploy this app to an unprotected host when authentication is required.
 
-Use Node 22+ and pnpm 10.11.0. Copy `.env.example` to `.env.local` and populate it securely with your Clerk development credentials. Then run `pnpm install`, `pnpm test`, and `pnpm dev`. No authentication keys belong in Git. `pnpm build` verifies the production bundle.
+The dashboard and direct report assets use private/no-store responses. Asset filenames are restricted to prevent arbitrary file access. Imported reports remain in browser-tab memory; export JSON to preserve an assessment. The Python scanner remains a separate local tool (`scanx-web`); no public scanning proxy is deployed.
 
-Account controls and sign-out are available at `/account`, linked from the dashboard. Imported reports stay in the current browser tab; the app does not store them in Clerk or upload them to Vercel. Closing or navigating away from the dashboard clears that in-memory view. Export JSON first to preserve it.
+## Git integration
 
-The Python scanner remains a separate local tool (`scanx-web`). No public scanning API or arbitrary target proxy is deployed on Vercel.
+Deployment currently uses Vercel's source-file API because its GitHub App has not been authorized for this repository. GitHub holds the matching source. Install the Vercel GitHub App for `aashleshshet/Scanx` and connect it in project Git settings to enable automatic deployments. A GitHub login connection alone does not grant repository access.
 
-## Repository connection
-
-Initial deployment uses the source-file API because Vercel's GitHub App was not yet authorized for this repository. The GitHub repository contains the matching source. For automatic deployments, install the Vercel GitHub App for `aashleshshet/Scanx` and connect it in the project's Git settings. Connecting GitHub as a login method alone does not grant repository deployment access.
-
-The Android APK and packaging have been removed from the current branch. Older commits retain their historical contents.
+Android packaging and the APK have been removed from the current branch. Historical commits retain their previous contents.

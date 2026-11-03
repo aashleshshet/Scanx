@@ -8,7 +8,7 @@ Use it against APIs you are authorized to test. Start with seeded test accounts 
 
 [Open the hosted workspace](https://scanx-aashlesh-ramadas-shet.vercel.app) · [How to use](https://scanx-aashlesh-ramadas-shet.vercel.app/workspace/how-to-use.html)
 
-The hosted Vercel site requires a verified email sign-in and provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports. Live scans run in the optional local Python server, using the same dashboard:
+The hosted Vercel site requires Vercel account sign-in and provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports. Live scans run in the optional local Python server, using the same dashboard:
 
 ```bash
 # From the cloned repository, with your virtual environment active:
@@ -214,6 +214,6 @@ Commit a resolved dependency lock for your chosen Python/platform and validate i
 
 Copyright © 2026 Aashlesh Shet. All rights reserved. See [COPYRIGHT](COPYRIGHT). Third-party dependencies retain their respective licenses. This repository currently does not grant an open-source license.
 
-## Hosted email sign-in
+## Hosted Vercel login
 
-The Next.js/Clerk deployment admits anyone with a verified primary email. Server-side checks protect the dashboard and direct report URLs. See [Vercel setup](docs/VERCEL.md) for authentication, local development, and deployment instructions. Android packaging has been removed.
+The hosted workspace uses Vercel Deployment Protection as its only login gate. Access is controlled by the Vercel project's access policy; a verified email alone does not grant access. There is no separate Clerk account or application sign-up screen. See [Vercel setup](docs/VERCEL.md). Android packaging has been removed.
