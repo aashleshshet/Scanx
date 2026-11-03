@@ -1,6 +1,6 @@
 # Hosted workspace with Vercel login
 
-Production: https://scanx-eight.vercel.app
+Production: https://onescanx.vercel.app
 
 The Next.js application serves the shared OnescanX dark, mobile-responsive frontend at `/workspace/index.html`. **Vercel Deployment Protection is the only authentication layer.** Keep Vercel Authentication enabled for every domain serving this app. The current `all_except_custom_domains` policy protects its Vercel URLs; explicitly protect any custom domain before adding it. Do not turn protection off: the application intentionally contains no second login gate.
 

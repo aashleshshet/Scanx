@@ -6,7 +6,7 @@ Use it against APIs you are authorized to test. Start with seeded test accounts 
 
 ## Website and beginner guide
 
-[Open the hosted workspace](https://scanx-aashlesh-ramadas-shet.vercel.app) · [How to use](https://scanx-aashlesh-ramadas-shet.vercel.app/workspace/how-to-use.html)
+[Open the hosted workspace](https://onescanx.vercel.app) · [How to use](https://onescanx.vercel.app/workspace/how-to-use.html)
 
 The hosted Vercel site requires Vercel account sign-in and provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports. Live scans run in the optional local Python server, using the same dashboard:
 
