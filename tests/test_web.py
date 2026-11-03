@@ -24,7 +24,7 @@ def test_web_static_runtime_and_host_boundary():
         ) as client:
             page = await client.get("/")
             assert page.status_code == 200
-            assert "Your API. A clearer picture." in page.text
+            assert "OnescanX · API security workspace" in page.text
             assert "frame-ancestors 'none'" in page.headers["content-security-policy"]
             assert "false" in (await client.get("/runtime.js")).text
             assert (await client.get("/api/capabilities")).json()["targets"] == []

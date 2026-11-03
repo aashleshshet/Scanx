@@ -10,7 +10,7 @@ function toast(text) { $('toast').textContent=text; $('toast').hidden=false; cle
 async function copy(text) { try { await navigator.clipboard.writeText(text); toast('Copied to clipboard'); } catch { toast('Clipboard unavailable. Select and copy the displayed commands.'); } }
 function date(value) { const d = new Date(value); return Number.isNaN(+d) ? 'Date unavailable' : d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
 function validate(report) {
-  if (!report || report.schema_version!=='1.0.0' || !Array.isArray(report.checks) || report.checks.length>20000 || !Array.isArray(report.modules) || typeof report.target!=='string' || !['complete','partial'].includes(report.status)) throw Error('Choose a Scanx report with schema version 1.0.0.');
+  if (!report || report.schema_version!=='1.0.0' || !Array.isArray(report.checks) || report.checks.length>20000 || !Array.isArray(report.modules) || typeof report.target!=='string' || !['complete','partial'].includes(report.status)) throw Error('Choose a OnescanX report with schema version 1.0.0.');
   for (const check of report.checks) {
     if (!check || typeof check.operation!=='string' || typeof check.module!=='string' || !Array.isArray(check.findings) || !['passed','failed','skipped','inconclusive','error'].includes(check.status)) throw Error('The report contains an invalid check result.');
     for (const f of check.findings) if (!f || !levels.includes(f.severity) || typeof f.title!=='string' || typeof f.operation!=='string' || typeof f.remediation!=='string') throw Error('The report contains an invalid finding.');
@@ -39,11 +39,8 @@ function render() {
   levels.forEach(l=>$(`count-${l}`).textContent=r.summary[l]);
   const confirmed=state.findings.filter(f=>f.verification==='confirmed').length;
   $('confirmed-count').textContent=confirmed; $('review-count').textContent=state.findings.length-confirmed;
-  $('posture-title').textContent=confirmed?`${confirmed} authorization issues confirmed`:state.findings.length?'Review the candidate findings':'No findings in this assessment';
+  $('posture-title').textContent=confirmed?`${confirmed} confirmed findings`:state.findings.length?'Review the candidate findings':'No findings in this assessment';
   $('posture-description').textContent=r.status==='partial'?'This scan is partial. Review incomplete checks before interpreting the findings.':'Confirmed findings and review candidates stay distinct, so you can act with context.';
-  let angle=0;
-  const segments=levels.map((l,i)=>{const start=angle;angle+=r.summary[l]/Math.max(state.findings.length,1)*100;return `${colors[i]} ${start}% ${angle}%`;});
-  document.querySelector('.ring').style.background=state.findings.length?`conic-gradient(${segments.join(',')})`:'#e5eee0';
   $('operations').textContent=r.operations_scheduled??0; $('requests').textContent=r.requests_sent??0; $('modules').textContent=r.modules.length;
   const passed=r.checks.filter(c=>c.status==='passed').length, failed=r.checks.filter(c=>c.status==='failed').length, gaps=r.checks.length-passed-failed;
   $('passed').textContent=passed; $('failed').textContent=failed; $('gaps').textContent=gaps;
@@ -55,46 +52,46 @@ function renderFindings() {
   const query=$('search').value.toLowerCase(), severity=$('severity-filter').value, verification=$('verification-filter').value;
   const list=state.findings.map((f,index)=>({f,index})).filter(({f})=>(!severity||f.severity===severity)&&(!verification||f.verification===verification)&&`${f.title} ${f.operation} ${f.rule_id} ${f.module}`.toLowerCase().includes(query));
   $('findings-count').textContent=state.findings.length;
-  $('findings-body').innerHTML=list.map(({f,index})=>`<tr><td><span class="badge ${escapeHTML(f.severity)}"><i class="severity-dot ${f.severity.toLowerCase()}"></i>${f.severity}</span></td><td><button data-finding="${index}">${escapeHTML(f.title)}</button><code>${escapeHTML(f.operation)}</code></td><td class="category">${escapeHTML((f.owasp||[]).join(', ')||f.module)}</td><td><span class="evidence ${f.verification==='confirmed'?'confirmed':''}">${f.verification==='confirmed'?'✓ Confirmed':'◌ Needs review'}</span></td><td><button class="row-arrow" data-finding="${index}" aria-label="View finding details">↗</button></td></tr>`).join('');
+  $('findings-body').innerHTML=list.map(({f,index})=>`<tr><td><span class="badge ${escapeHTML(f.severity)}"><i class="severity-dot ${f.severity.toLowerCase()}"></i>${f.severity}</span></td><td><button data-finding="${index}">${escapeHTML(f.title)}</button><code>${escapeHTML(f.operation)}</code></td><td class="category">${escapeHTML((f.owasp||[]).join(', ')||f.module)}</td><td><span class="evidence ${f.verification==='confirmed'?'confirmed':''}">${f.verification==='confirmed'?'Confirmed':'Needs review'}</span></td><td><button class="row-arrow" data-finding="${index}" aria-label="View finding details">↗</button></td></tr>`).join('');
   $('empty-findings').hidden=!!list.length;
   $('table-count').textContent=`Showing ${list.length} of ${state.findings.length} findings`;
 }
 function clearFilters(){ $('search').value='';$('severity-filter').value='';$('verification-filter').value='';renderFindings(); }
 function changeView(view){
   state.view=view;
-  const names={overview:['Overview','Your API. A clearer picture.','Move from scan results to the fixes that matter.'],findings:['Findings','Evidence you can act on.','Explore findings, inspect the evidence, and prioritize remediation.'],history:['Scan history','Every assessment, in view.','Revisit the reports you have opened in this session.'],guide:['How to use','From specification to clarity.','A practical workflow for testing APIs you control.']};
+  const names={overview:['Overview','Overview','Move from scan results to the fixes that matter.'],findings:['Findings','Findings','Explore findings, inspect the evidence, and prioritize remediation.'],history:['Scan history','Scan history','Revisit the reports you have opened in this session.'],guide:['How to use','How to use','A practical workflow for testing APIs you control.']};
   $('breadcrumb').textContent=names[view][0];$('page-title').textContent=names[view][1];$('page-description').textContent=names[view][2];
-  document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.dataset.view===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   $('overview-view').hidden=view!=='overview';$('findings-view').hidden=!['overview','findings'].includes(view);$('history-view').hidden=view!=='history';$('guide-view').hidden=view!=='guide';$('report-banner').hidden=!['overview','findings'].includes(view);
   if(view==='history')renderHistory();
 }
 function showFinding(index){
   const f=state.findings[index];if(!f)return;
-  $('finding-detail').innerHTML=`<div class="detail-meta"><span class="badge ${escapeHTML(f.severity)}">${escapeHTML(f.severity)}</span><span class="evidence">${escapeHTML(f.confidence)} confidence · ${f.verification==='confirmed'?'Confirmed':'Needs review'}</span></div><h2>${escapeHTML(f.title)}</h2><div class="detail-operation">${escapeHTML(f.operation)}</div><p>${escapeHTML(f.description)}</p><h3>Recommended remediation</h3><p>${escapeHTML(f.remediation)}</p><h3>Observed evidence</h3><pre class="detail-evidence">${escapeHTML(JSON.stringify(f.evidence||{},null,2))}</pre><p class="subtle">${escapeHTML(f.rule_id)} · ${escapeHTML([...(f.owasp||[]),...(f.cwe||[])].join(' / '))}</p>`;
+  $('finding-detail').innerHTML=`<div class="detail-meta"><span class="badge ${escapeHTML(f.severity)}">${escapeHTML(f.severity)}</span><span class="evidence">${escapeHTML(f.confidence)} confidence · ${f.verification==='confirmed'?'Confirmed':'Needs review'}</span></div><h2 id="finding-title">${escapeHTML(f.title)}</h2><div class="detail-operation">${escapeHTML(f.operation)}</div><p>${escapeHTML(f.description)}</p><h3>Recommended remediation</h3><p>${escapeHTML(f.remediation)}</p><h3>Observed evidence</h3><pre class="detail-evidence">${escapeHTML(JSON.stringify(f.evidence||{},null,2))}</pre><p class="subtle">${escapeHTML(f.rule_id)} · ${escapeHTML([...(f.owasp||[]),...(f.cwe||[])].join(' / '))}</p>`;
   $('finding-dialog').showModal();
 }
 function renderHistory(){
-  $('history-list').innerHTML=state.history.map((h,i)=>`<div class="history-row"><span class="banner-icon">◷</span><div><strong>${escapeHTML(h.report.target)}</strong><small>${date(h.report.finished_at||h.report.started_at)} · ${h.report.checks.flatMap(c=>c.findings).length} findings · ${escapeHTML(h.report.status)}</small></div><span class="tag">${h.source==='demo'?'SYNTHETIC':h.source==='import'?'IMPORTED':'LOCAL'}</span><button class="text-button" data-history="${i}">Open report ↗</button></div>`).join('')||'<div class="empty-state"><p>No reports opened yet.</p></div>';
+  $('history-list').innerHTML=state.history.map((h,i)=>`<div class="history-row"><div><strong>${escapeHTML(h.report.target)}</strong><small>${date(h.report.finished_at||h.report.started_at)} · ${h.report.checks.flatMap(c=>c.findings).length} findings · ${escapeHTML(h.report.status)}</small></div><span class="tag">${h.source==='demo'?'SYNTHETIC':h.source==='import'?'IMPORTED':'LOCAL'}</span><button class="text-button" data-history="${i}">Open report</button></div>`).join('')||'<div class="empty-state"><p>No reports opened yet.</p></div>';
 }
 async function loadDemo(kind='vulnerable') {
   try{const response=await fetch(`./demo-${kind}.json`);if(!response.ok)throw Error('Could not load the sample report.');selectReport(await response.json(),'demo');changeView('overview');}catch(e){toast(e.message);}
 }
-function download(content, format, type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`scanx-report.${format}`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function download(content, format, type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`onescanx-report.${format}`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function exportReport(){
   if(!state.report)return;
   const format=$('export-format').value;
-  if(state.job&&!state.hosted){const a=document.createElement('a');a.href=`/api/scans/${encodeURIComponent(state.job)}/export/${format}`;a.download=`scanx-report.${format}`;a.click();return;}
+  if(state.job&&!state.hosted){const a=document.createElement('a');a.href=`/api/scans/${encodeURIComponent(state.job)}/export/${format}`;a.download=`onescanx-report.${format}`;a.click();return;}
   if(format==='json'){download(JSON.stringify(state.report,null,2),'json','application/json');return;}
   const safeMD=value=>escapeHTML(value).replace(/([\\`*_{}\[\]()#+.!|>~-])/g,'\\$1').replace(/[\r\n]+/g,' ');
   const r=state.report;
-  let md=`# Scanx API assessment\n\nTarget: ${safeMD(r.target)}\n\nStatus: ${safeMD(r.status)}\n\n`;
+  let md=`# OnescanX API assessment\n\nTarget: ${safeMD(r.target)}\n\nStatus: ${safeMD(r.status)}\n\n`;
   md+=levels.map(l=>`${l}: ${r.summary[l]}`).join(' · ')+'\n\n';
   for(const f of state.findings)md+=`## ${safeMD(f.severity)}: ${safeMD(f.title)}\n\n${safeMD(f.operation)}\n\n${safeMD(f.confidence)} confidence · ${safeMD(f.verification)}\n\n${safeMD(f.description)}\n\nRemediation: ${safeMD(f.remediation)}\n\n${JSON.stringify(f.evidence||{},null,2).split('\n').map(l=>'    '+l).join('\n')}\n\n`;
   md+='## Coverage\n\n'+r.checks.map(c=>`- ${safeMD(c.operation)} · ${safeMD(c.module)} · ${safeMD(c.status)}: ${safeMD(c.reason)}`).join('\n')+'\n\n## Limitations\n\n'+(r.limitations||[]).map(l=>`- ${safeMD(l)}`).join('\n');
   if(format==='md'){download(md,'md','text/markdown');return;}
   const rows=r.checks.map(c=>`<tr><td>${escapeHTML(c.operation)}</td><td>${escapeHTML(c.module)}</td><td>${escapeHTML(c.status)}</td><td>${escapeHTML(c.reason)}</td></tr>`).join('');
   const articles=state.findings.map(f=>`<article><small>${escapeHTML(f.severity)} · ${escapeHTML(f.confidence)} confidence · ${escapeHTML(f.verification)}</small><h2>${escapeHTML(f.title)}</h2><code>${escapeHTML(f.operation)}</code><p>${escapeHTML(f.description)}</p><p><b>Remediation:</b> ${escapeHTML(f.remediation)}</p><pre>${escapeHTML(JSON.stringify(f.evidence||{},null,2))}</pre></article>`).join('');
-  const html=`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'"><title>Scanx assessment</title><style>body{font:15px/1.7 system-ui;color:#243a2e;max-width:1000px;margin:50px auto;padding:24px;background:#f6f8f3}article{background:white;border:1px solid #dfe8d8;border-radius:8px;margin:20px 0;padding:25px}small{color:#74905f}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f0f4eb;padding:16px}table{border-collapse:collapse;width:100%;font-size:12px}td,th{border-bottom:1px solid #dfe8d8;padding:10px;text-align:left}</style><h1>Scanx API security assessment</h1><p>${escapeHTML(r.target)} · ${escapeHTML(r.status)}</p><p>${levels.map(l=>`${l}: ${r.summary[l]}`).join(' · ')}</p>${articles||'<p>No findings were produced by the configured checks.</p>'}<h2>Coverage</h2><table><thead><tr><th>Operation</th><th>Module</th><th>Outcome</th><th>Reason</th></tr></thead><tbody>${rows}</tbody></table><h2>Limitations</h2><ul>${(r.limitations||[]).map(l=>`<li>${escapeHTML(l)}</li>`).join('')}</ul></html>`;
+  const html=`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'"><title>OnescanX assessment</title><style>body{font:15px/1.7 system-ui;color:#243a2e;max-width:1000px;margin:50px auto;padding:24px;background:#f6f8f3}article{background:white;border:1px solid #dfe8d8;border-radius:8px;margin:20px 0;padding:25px}small{color:#74905f}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f0f4eb;padding:16px}table{border-collapse:collapse;width:100%;font-size:12px}td,th{border-bottom:1px solid #dfe8d8;padding:10px;text-align:left}</style><h1>OnescanX API security assessment</h1><p>${escapeHTML(r.target)} · ${escapeHTML(r.status)}</p><p>${levels.map(l=>`${l}: ${r.summary[l]}`).join(' · ')}</p>${articles||'<p>No findings were produced by the configured checks.</p>'}<h2>Coverage</h2><table><thead><tr><th>Operation</th><th>Module</th><th>Outcome</th><th>Reason</th></tr></thead><tbody>${rows}</tbody></table><h2>Limitations</h2><ul>${(r.limitations||[]).map(l=>`<li>${escapeHTML(l)}</li>`).join('')}</ul></html>`;
   download(html,'html','text/html');
 }
 async function api(url,options={}) {
@@ -154,6 +151,8 @@ $('scan-form').onsubmit=async e=>{
 };
 async function initialize(){
   await loadDemo();
+  changeView('overview');
+  $('new-scan').textContent=window.SCANX_HOSTED===false?'New scan':'Run locally';
   if(window.SCANX_HOSTED===false){
     try{const config=await api('/api/capabilities');state.hosted=false;state.targets=config.targets;$('runtime-label').textContent='Local Python runner';$('runtime-pill').innerHTML='<i></i> Local runner connected';
       for(const target of state.targets){const option=document.createElement('option');option.textContent=target;option.value=target;$('target').append(option);}

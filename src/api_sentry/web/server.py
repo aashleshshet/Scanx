@@ -79,7 +79,7 @@ def create_app(targets: list[str] | None = None, *, runner=scan) -> FastAPI:
             task.cancel()
         await asyncio.gather(*pending, return_exceptions=True)
 
-    app = FastAPI(title="Scanx", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
+    app = FastAPI(title="OnescanX", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "[::1]"])
 
     @app.middleware("http")
@@ -252,7 +252,7 @@ def create_app(targets: list[str] | None = None, *, runner=scan) -> FastAPI:
         return Response(
             content,
             media_type="application/octet-stream",
-            headers={"Content-Disposition": f'attachment; filename="scanx-report.{format}"'},
+            headers={"Content-Disposition": f'attachment; filename="onescanx-report.{format}"'},
         )
 
     app.mount("/", StaticFiles(directory=STATIC, html=True), name="workspace")
@@ -260,7 +260,7 @@ def create_app(targets: list[str] | None = None, *, runner=scan) -> FastAPI:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run the local Scanx web workspace")
+    parser = argparse.ArgumentParser(description="Run the local OnescanX web workspace")
     parser.add_argument(
         "--target",
         action="append",
