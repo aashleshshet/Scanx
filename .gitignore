@@ -13,3 +13,9 @@ scenarios.local.yaml
 /work/
 /outputs/
 /demo-reports/
+/node_modules/
+/.next/
+/.vercel/
+.env*
+!.env.example
+/.pnpm-store/

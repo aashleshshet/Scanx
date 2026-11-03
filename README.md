@@ -6,9 +6,9 @@ Use it against APIs you are authorized to test. Start with seeded test accounts 
 
 ## Website and beginner guide
 
-[Open the hosted workspace](https://scanx-api-security.bonnypaint4.chatgpt.site) · [How to use](https://scanx-api-security.bonnypaint4.chatgpt.site/how-to-use.html)
+[Open the hosted workspace](https://scanx-aashlesh-ramadas-shet.vercel.app) · [How to use](https://scanx-aashlesh-ramadas-shet.vercel.app/workspace/how-to-use.html)
 
-The hosted site is public, requires no sign-in, and provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports. Live scans run in the optional local Python server, using the same dashboard:
+The hosted Vercel site requires a verified email sign-in and provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports. Live scans run in the optional local Python server, using the same dashboard:
 
 ```bash
 # From the cloned repository, with your virtual environment active:
@@ -213,3 +213,7 @@ Commit a resolved dependency lock for your chosen Python/platform and validate i
 ## Copyright
 
 Copyright © 2026 Aashlesh Shet. All rights reserved. See [COPYRIGHT](COPYRIGHT). Third-party dependencies retain their respective licenses. This repository currently does not grant an open-source license.
+
+## Hosted email sign-in
+
+The Next.js/Clerk deployment admits anyone with a verified primary email. Server-side checks protect the dashboard and direct report URLs. See [Vercel setup](docs/VERCEL.md) for authentication, local development, and deployment instructions. Android packaging has been removed.

@@ -1,0 +1,2 @@
+import { SignUp } from '@clerk/nextjs';
+export default function Signup() { return <main className="auth-shell"><section className="intro"><a className="brand" href="/">scanx<span>.</span></a><p className="eyebrow">YOUR SECURITY WORKSPACE</p><h1>Start with your email.</h1><p>Anyone with a verified email address can join. Complete email verification to access the workspace.</p></section><section className="auth-card"><SignUp routing="path" path="/sign-up" signInUrl="/sign-in" /></section><footer>© 2026 Aashlesh Shet</footer></main>; }
