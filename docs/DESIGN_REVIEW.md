@@ -1,24 +1,27 @@
-# OnescanX design review
+# Liquid Glass implementation verification
 
-Method: Taste true-black-flat implementation and Impeccable critique with two independent assessments (design review and detector/browser evidence). Target: `src/api_sentry/web/static/index.html`.
+## Scope
 
-## Findings and corrections
+The existing Next.js hosted workspace and FastAPI local workspace share HTML, CSS, and JavaScript. Existing views, sample/import distinctions, API contracts, scanner modules, safety limits, and Vercel authentication remain intact. There is no database or application-owned authentication/settings route. No replacement infrastructure or runtime dependencies were introduced.
 
-- Named both dialogs for assistive technology.
-- Retained hosted/local runtime context on phones.
-- Announce filtered counts through a polite status region.
-- Raised 10px functional labels to 11px.
-- Removed decorative history glyphs and corrected hosted Run locally help wording.
-- Fixed confirmed-finding copy so it no longer labels every confirmed issue an authorization vulnerability.
+## UI verification
 
-The original detector returned nine undersized-text warnings and one low-contrast hover warning. The size warnings were corrected in source. Hover warning inspected as a cascade false positive: primary hover explicitly sets white background and black text. No claim of a zero-warning rerun.
+Browser inspected dark and light desktop appearance, phone findings and dialogs at 390px, compact phone at 320px, and tablet at 768px. Document width remained within the viewport. Verified overview/findings/history/help navigation, severity/search filtering, evidence dialog, empty results, protected/vulnerable sample switching, beginner guide and copyright routes, local scan setup, OpenAPI upload and scheme discovery, JSON download/reimport, and HTML/Markdown downloads. No errors or warnings were reported in inspected browser console logs.
 
-## Review scope
+Portfolio badge markup, placeholder profile styles, and the runtime-label JavaScript dependency were removed. Source search and HTTP route checks confirm the badge text is absent from shipped assets. Existing OnescanX branding is retained.
 
-Independent visual checks on desktop and at 390×844: coherent charcoal hierarchy, readable stacked findings, fitting evidence dialog, and working navigation. Browser evidence found no horizontal overflow and no console errors. Detector installed from the official Impeccable release. Its page overlay was not injected because browser evaluation is read-only.
+## Executed checks
 
-Nielsen heuristic scores before corrections (0–4, higher better): status 3, real-world match 3, control 3, consistency 3, prevention 3, recognition 3, efficiency 3, minimalism 3, recovery 2, help 3. Scores are qualitative and scoped to inspected interactions, not a certification.
+- Python suite: 58 passed, covering scanner behavior, authorization fixtures, request scope, budgets, redaction, local jobs/cancellation, exports, and input handling.
+- Node suite: 3 passed, covering asset traversal restrictions and appearance behavior with system changes, saved preferences, and unavailable storage.
+- Ruff lint and format check passed.
+- JavaScript syntax checks passed for app.js and theme.js.
+- Next.js production build passed, including its build/type-check phase; this application uses JavaScript, not a separate TypeScript codebase.
+- Real scanner engine run against in-process fixtures: vulnerable 2 High / 1 Medium / 7 Low; protected zero findings. These are explicitly synthetic tests, not live external scans.
+- Local production HTTP checks: root redirect, workspace redirect, all three HTML pages, new appearance asset, shared CSS/logo, sample JSON and example spec returned successfully; missing file returned 404.
 
-Remaining tradeoff: phone Overview has substantial context above the full finding list; fixed Findings navigation and severity shortcuts provide direct access. Full screen-reader, physical-device, and live-scan testing were not performed for this visual change.
+## Accessibility and performance
 
-Questions skipped: implementation direction was explicitly authorized; review corrections applied directly.
+Named native dialogs, text severity/evidence labels, polite filter announcements, visible focus, safe-area navigation, reduced motion, and light/dark tokens. Touch and reduced-transparency configurations remove backdrop blur; nested controls do not blur. Only appearance is persisted. Reports and credentials are not added to storage.
+
+Limitations: no physical-device benchmark or full screen-reader audit; live scans against an external API were not performed. Hosted production continues to explore/import reports; live scanning runs in the local Python service. Authentication UI belongs to Vercel and is not restyled by this application.

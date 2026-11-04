@@ -1,10 +1,13 @@
-# OnescanX design
+# OnescanX Liquid Glass design system
 
-Primary question: which API findings require validation or remediation?
-Audience: security engineers and beginners inspecting real or explicitly synthetic reports.
+Existing product and routes remain: Overview, Findings, Scan history, How to use, beginner guide, copyright, local scan configuration, and self-contained reports. Hosted authentication remains Vercel Deployment Protection. No database exists in this project; reports remain in memory.
 
-Taste app direction: true-black-flat, devtools, seed 1814922740. Cool charcoal ground, elevation through lightness, restrained severity color, no glass or entrance animation. Native system typography deliberately avoids remote font loading and keeps local/offline scanner parity.
+## Tokens and surfaces
 
-The original SVG mark combines an open O scan perimeter, a verification stroke, and an X target. The matching favicon stays legible at small sizes. A tiny repeated SVG texture gives the ground subtle grain without runtime filters.
+The shared stylesheet defines navy/charcoal ground, cyan primary accents, controlled violet ambient light, semantic severity colors, glass opacity, highlight, border, shadow, radius, blur, and timing tokens. Light appearance overrides the same tokens. `theme.js` loads before CSS, follows OS appearance until overridden, and stores only that preference.
 
-Mobile: four labeled bottom destinations, safe-area padding, 44px form controls, stacked findings, full-width search, native dialogs, and reduced-motion support. Vercel authentication stays at the deployment boundary. Repository and CLI names remain compatible with existing installations.
+Blur is limited to outer panels. Nested controls use fills, and touch/reduced-transparency devices use solid translucent fallback panels without blur. Ambient lighting is static. Motion uses short transforms/opacity for hover, press, and dialog entry. Scan progress is indeterminate, never an invented completion percentage. Reduced motion removes animation.
+
+The mobile layout provides labeled bottom navigation, safe-area spacing, stacked finding rows, 44px primary/form targets, and accessible native dialogs. The tablet breakpoint simplifies columns and keeps controls usable. Severity, source, and verification remain textual as well as colored.
+
+Portfolio badge markup, placeholder profile styles, and its JS dependency are removed. The actual OnescanX brand and all scan/report contracts remain intact. No new runtime dependencies.

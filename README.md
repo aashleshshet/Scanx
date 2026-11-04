@@ -2,7 +2,7 @@
 
 OnescanX is a Python 3.11+ web application and CLI (installed as `api-sentry`) for specification-driven REST API security testing. It includes a bounded async engine, a complete paired-user BOLA module, focused authentication/header/CORS/injection/rate checks, and versioned JSON plus executive Markdown/HTML reports.
 
-Use it against APIs you are authorized to test. Start with seeded test accounts and private fixture objects in a staging environment. This is a tested portfolio foundation with explicit coverage limits; production readiness also depends on the target API's authorization policy, deployment constraints and integration tests.
+Use it against APIs you are authorized to test. Start with seeded test accounts and private fixture objects in a staging environment. This is a tested scanner foundation with explicit coverage limits; production readiness also depends on the target API's authorization policy, deployment constraints and integration tests.
 
 ## Website and beginner guide
 
@@ -220,4 +220,4 @@ The hosted workspace uses Vercel Deployment Protection as its only login gate. A
 
 ## Interface and branding
 
-OnescanX uses a minimalist charcoal interface, a custom SVG logo, subtle static texture, and responsive finding rows with labeled mobile navigation. The beginner guide and copyright page share the same design. Vercel login remains the only hosted authentication layer. Existing `scanx-web` commands and the `aashleshshet/Scanx` repository URL remain compatible. See [design notes](DESIGN.md) and [design review](docs/DESIGN_REVIEW.md).
+OnescanX uses a Liquid Glass interface with dark and light appearance, a custom SVG logo, subtle static texture, and responsive finding rows with labeled mobile navigation. The beginner guide and copyright page share the same design. Vercel login remains the only hosted authentication layer. Existing `scanx-web` commands and the `aashleshshet/Scanx` repository URL remain compatible. See [design notes](DESIGN.md) and [design review](docs/DESIGN_REVIEW.md).

@@ -1,7 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const levels = ['Critical', 'High', 'Medium', 'Low'];
-const colors = ['#a64b59', '#d7635b', '#d69c3d', '#6c8fa5'];
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const setup = "git clone https://github.com/aashleshshet/Scanx.git\ncd Scanx\npython3.11 -m venv .venv\nsource .venv/bin/activate\npip install -e '.[web]'\nscanx-web --target https://your-api.example/v1";
 const state = {report:null, findings:[], history:[], view:'overview', source:'', job:null, targets:[], hosted:true};
@@ -51,8 +50,8 @@ function render() {
 function renderFindings() {
   const query=$('search').value.toLowerCase(), severity=$('severity-filter').value, verification=$('verification-filter').value;
   const list=state.findings.map((f,index)=>({f,index})).filter(({f})=>(!severity||f.severity===severity)&&(!verification||f.verification===verification)&&`${f.title} ${f.operation} ${f.rule_id} ${f.module}`.toLowerCase().includes(query));
-  $('findings-count').textContent=state.findings.length;
-  $('findings-body').innerHTML=list.map(({f,index})=>`<tr><td><span class="badge ${escapeHTML(f.severity)}"><i class="severity-dot ${f.severity.toLowerCase()}"></i>${f.severity}</span></td><td><button data-finding="${index}">${escapeHTML(f.title)}</button><code>${escapeHTML(f.operation)}</code></td><td class="category">${escapeHTML((f.owasp||[]).join(', ')||f.module)}</td><td><span class="evidence ${f.verification==='confirmed'?'confirmed':''}">${f.verification==='confirmed'?'Confirmed':'Needs review'}</span></td><td><button class="row-arrow" data-finding="${index}" aria-label="View finding details">↗</button></td></tr>`).join('');
+  $('findings-count').textContent=list.length;
+  $('findings-body').innerHTML=list.map(({f,index})=>`<tr><td><span class="badge ${escapeHTML(f.severity)}"><i class="severity-dot ${f.severity.toLowerCase()}"></i>${f.severity}</span></td><td><button data-finding="${index}">${escapeHTML(f.title)}</button><code>${escapeHTML(f.operation)}</code></td><td class="category">${escapeHTML((f.owasp||[]).join(', ')||f.module)}</td><td><span class="evidence ${f.verification==='confirmed'?'confirmed':''}">${f.verification==='confirmed'?'Confirmed':'Needs review'}</span></td><td><button class="row-arrow" data-finding="${index}" aria-label="View finding details"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></td></tr>`).join('');
   $('empty-findings').hidden=!!list.length;
   $('table-count').textContent=`Showing ${list.length} of ${state.findings.length} findings`;
 }
@@ -64,6 +63,7 @@ function changeView(view){
   document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.dataset.view===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   $('overview-view').hidden=view!=='overview';$('findings-view').hidden=!['overview','findings'].includes(view);$('history-view').hidden=view!=='history';$('guide-view').hidden=view!=='guide';$('report-banner').hidden=!['overview','findings'].includes(view);
   if(view==='history')renderHistory();
+  window.scrollTo({top:0,behavior:'instant'});
 }
 function showFinding(index){
   const f=state.findings[index];if(!f)return;
@@ -74,7 +74,8 @@ function renderHistory(){
   $('history-list').innerHTML=state.history.map((h,i)=>`<div class="history-row"><div><strong>${escapeHTML(h.report.target)}</strong><small>${date(h.report.finished_at||h.report.started_at)} · ${h.report.checks.flatMap(c=>c.findings).length} findings · ${escapeHTML(h.report.status)}</small></div><span class="tag">${h.source==='demo'?'SYNTHETIC':h.source==='import'?'IMPORTED':'LOCAL'}</span><button class="text-button" data-history="${i}">Open report</button></div>`).join('')||'<div class="empty-state"><p>No reports opened yet.</p></div>';
 }
 async function loadDemo(kind='vulnerable') {
-  try{const response=await fetch(`./demo-${kind}.json`);if(!response.ok)throw Error('Could not load the sample report.');selectReport(await response.json(),'demo');changeView('overview');}catch(e){toast(e.message);}
+  $('report-banner').setAttribute('aria-busy','true');
+  try{const response=await fetch(`./demo-${kind}.json`);if(!response.ok)throw Error('Could not load the sample report.');selectReport(await response.json(),'demo');changeView('overview');}catch(e){toast(e.message);}finally{$('report-banner').removeAttribute('aria-busy');}
 }
 function download(content, format, type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`onescanx-report.${format}`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function exportReport(){
@@ -91,7 +92,7 @@ function exportReport(){
   if(format==='md'){download(md,'md','text/markdown');return;}
   const rows=r.checks.map(c=>`<tr><td>${escapeHTML(c.operation)}</td><td>${escapeHTML(c.module)}</td><td>${escapeHTML(c.status)}</td><td>${escapeHTML(c.reason)}</td></tr>`).join('');
   const articles=state.findings.map(f=>`<article><small>${escapeHTML(f.severity)} · ${escapeHTML(f.confidence)} confidence · ${escapeHTML(f.verification)}</small><h2>${escapeHTML(f.title)}</h2><code>${escapeHTML(f.operation)}</code><p>${escapeHTML(f.description)}</p><p><b>Remediation:</b> ${escapeHTML(f.remediation)}</p><pre>${escapeHTML(JSON.stringify(f.evidence||{},null,2))}</pre></article>`).join('');
-  const html=`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'"><title>OnescanX assessment</title><style>body{font:15px/1.7 system-ui;color:#243a2e;max-width:1000px;margin:50px auto;padding:24px;background:#f6f8f3}article{background:white;border:1px solid #dfe8d8;border-radius:8px;margin:20px 0;padding:25px}small{color:#74905f}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f0f4eb;padding:16px}table{border-collapse:collapse;width:100%;font-size:12px}td,th{border-bottom:1px solid #dfe8d8;padding:10px;text-align:left}</style><h1>OnescanX API security assessment</h1><p>${escapeHTML(r.target)} · ${escapeHTML(r.status)}</p><p>${levels.map(l=>`${l}: ${r.summary[l]}`).join(' · ')}</p>${articles||'<p>No findings were produced by the configured checks.</p>'}<h2>Coverage</h2><table><thead><tr><th>Operation</th><th>Module</th><th>Outcome</th><th>Reason</th></tr></thead><tbody>${rows}</tbody></table><h2>Limitations</h2><ul>${(r.limitations||[]).map(l=>`<li>${escapeHTML(l)}</li>`).join('')}</ul></html>`;
+  const html=`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'"><title>OnescanX assessment</title><style> :root{color-scheme:dark;--ink:#edf4ff;--muted:#becce0;--line:#bfdcff30;--panel:#14253be6;--ground:#091322}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top left,#16455e55,transparent 65%),var(--ground);color:var(--ink);font:15px/1.7 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1080px;margin:40px auto;padding:0 24px}body>h1,body>h2,body>p,body>article,body>table,body>ul{max-width:1080px;margin-left:auto;margin-right:auto}header,article,.metric{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:inset 0 1px 0 #ffffff12,0 12px 30px #0002;padding:24px}header{padding:32px;background:linear-gradient(130deg,#1c3b55e6,#242e4be6)}h1{font-size:30px;line-height:1.3}h2{margin-top:32px}p,li{color:var(--muted)}.label,small{color:var(--muted);font-size:13px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}.metric b{display:block;font-size:30px}.finding,article{margin:18px 0}.finding.high,.finding.critical{border-left:3px solid #ffb1a5}.finding.medium{border-left:3px solid #ebd79e}.finding.low{border-left:3px solid #9fceff}code,pre{font-family:ui-monospace,monospace;font-size:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#050f1c80;padding:16px;border-radius:12px}table{border-collapse:collapse;width:100%;font-size:12px;table-layout:fixed}th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line);overflow-wrap:anywhere}summary{cursor:pointer;min-height:44px}summary:focus-visible{outline:2px solid #9fceff;outline-offset:3px}@media(prefers-color-scheme:light){:root{color-scheme:light;--ink:#14243d;--muted:#425975;--line:#27466c30;--panel:#ffffffc9;--ground:#edf3fa}header{background:#ffffffb3}pre{background:#e5edf6}}@media(max-width:640px){main{padding:0 16px;margin:24px auto}.metrics{grid-template-columns:1fr 1fr;gap:10px}header,article,.metric{padding:18px}h1{font-size:24px}th,td{padding:8px;font-size:11px}}@media print{body{background:#fff;color:#111}header,article,.metric{background:#fff;box-shadow:none;border:1px solid #ccc}p,li,.label,small{color:#333}pre{background:#eee}article{break-inside:avoid}}</style><h1>OnescanX API security assessment</h1><p>${escapeHTML(r.target)} · ${escapeHTML(r.status)}</p><p>${levels.map(l=>`${l}: ${r.summary[l]}`).join(' · ')}</p>${articles||'<p>No findings were produced by the configured checks.</p>'}<h2>Coverage</h2><table><thead><tr><th>Operation</th><th>Module</th><th>Outcome</th><th>Reason</th></tr></thead><tbody>${rows}</tbody></table><h2>Limitations</h2><ul>${(r.limitations||[]).map(l=>`<li>${escapeHTML(l)}</li>`).join('')}</ul></html>`;
   download(html,'html','text/html');
 }
 async function api(url,options={}) {
@@ -154,7 +155,7 @@ async function initialize(){
   changeView('overview');
   $('new-scan').textContent=window.SCANX_HOSTED===false?'New scan':'Run locally';
   if(window.SCANX_HOSTED===false){
-    try{const config=await api('/api/capabilities');state.hosted=false;state.targets=config.targets;$('runtime-label').textContent='Local Python runner';$('runtime-pill').innerHTML='<i></i> Local runner connected';
+    try{const config=await api('/api/capabilities');state.hosted=false;state.targets=config.targets;$('runtime-pill').innerHTML='<i></i> Local runner connected';
       for(const target of state.targets){const option=document.createElement('option');option.textContent=target;option.value=target;$('target').append(option);}
       const jobs=await api('/api/scans');
       for(const job of jobs){if(job.status==='running'){pollJob(job.id);continue;}if(job.status==='complete'){const full=await api(`/api/scans/${encodeURIComponent(job.id)}`);state.history.push({key:job.id,report:validate(full.report),source:'local',job:job.id});}}
