@@ -73,9 +73,9 @@ function showFinding(index){
 function renderHistory(){
   $('history-list').innerHTML=state.history.map((h,i)=>`<div class="history-row"><div><strong>${escapeHTML(h.report.target)}</strong><small>${date(h.report.finished_at||h.report.started_at)} · ${h.report.checks.flatMap(c=>c.findings).length} findings · ${escapeHTML(h.report.status)}</small></div><span class="tag">${h.source==='demo'?'SYNTHETIC':h.source==='import'?'IMPORTED':'LOCAL'}</span><button class="text-button" data-history="${i}">Open report</button></div>`).join('')||'<div class="empty-state"><p>No reports opened yet.</p></div>';
 }
-async function loadDemo(kind='vulnerable') {
+async function loadDemo(kind='vulnerable', preserveView=false) {
   $('report-banner').setAttribute('aria-busy','true');
-  try{const response=await fetch(`./demo-${kind}.json`);if(!response.ok)throw Error('Could not load the sample report.');selectReport(await response.json(),'demo');changeView('overview');}catch(e){toast(e.message);}finally{$('report-banner').removeAttribute('aria-busy');}
+  try{const response=await fetch(`./demo-${kind}.json`);if(!response.ok)throw Error('Could not load the sample report.');selectReport(await response.json(),'demo');if(!preserveView)changeView('overview');}catch(e){toast(e.message);}finally{$('report-banner').removeAttribute('aria-busy');}
 }
 function download(content, format, type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`onescanx-report.${format}`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function exportReport(){
@@ -151,8 +151,8 @@ $('scan-form').onsubmit=async e=>{
   }catch(error){$('scan-error').textContent=error.message;}finally{$('run-scan').disabled=false;}
 };
 async function initialize(){
-  await loadDemo();
-  changeView('overview');
+  await loadDemo('vulnerable',true);
+  changeView(state.view);
   $('new-scan').textContent=window.SCANX_HOSTED===false?'New scan':'Run locally';
   if(window.SCANX_HOSTED===false){
     try{const config=await api('/api/capabilities');state.hosted=false;state.targets=config.targets;$('runtime-pill').innerHTML='<i></i> Local runner connected';
