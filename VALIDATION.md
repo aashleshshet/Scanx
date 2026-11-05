@@ -1,5 +1,29 @@
 # Validation record
 
+## Intelligence workspace MVP — 5 November 2026
+
+Executed locally on Python 3.12 / Node 22+:
+
+| Check | Result |
+| --- | --- |
+| Python suite | 70 passed, 1 infrastructure test skipped |
+| Ruff lint and formatting | Passed |
+| Node unit tests | 6 passed |
+| Next.js production build | Passed; existing pages plus platform/GitHub API routes |
+| Production JavaScript dependency audit | No known vulnerabilities found |
+| Backend API tests | Session expiry/logout/CSRF, target approval/ownership, scheduling, credential reference restrictions, report storage, PDF/CSV and validation errors passed |
+| Worker integration with synthetic transport | Actual scanner engine completed and persisted report |
+| AI boundary tests | Untrusted input separated from system policy; unknown citations rejected; no-consent fallback passed |
+| Browser checks | All workspace destinations opened; desktop overflow/branding checks passed; OpenAPI JSON import produced correct auth declarations; mobile More menu and evidence assistant exercised |
+
+One installed Starlette TestClient deprecation warning refers to its HTTPX adapter. Docker is unavailable on this development machine: the full Compose stack and live PostgreSQL/Redis processes were not run locally. A dedicated GitHub Actions job tests the PostgreSQL → Redis → Celery → database round trip; Playwright/axe and Python dependency/secret checks are also configured. Their results must be read from the exact commit's CI run, not inferred from this local record.
+
+The optional LLM was tested with mocked provider responses, not a real configured model. No hosted backend, worker, database or model credentials were provisioned. No arbitrary external API was scanned. Manual browser checks do not establish full screen-reader or physical-device conformance.
+
+Taste's static lint flags the existing gradients, shadows and glass effects. These are retained as explicit requirements of the user's Liquid Glass brief; the lint is not reported as passing. Impeccable's launcher could not initialize its cache; its review guidance was applied manually. Mobile primary navigation was reduced to four routes plus a complete More menu, and report-dependent pages retain source labels.
+
+The original scanner validation below remains applicable; its dated counts describe the earlier baseline.
+
 Validated on 2 November 2026 with Python 3.12 on macOS ARM64. All scanner tests use `httpx.MockTransport` or synthetic observations. The web UI was also exercised against a synthetic HTTP API on loopback; no external API was scanned.
 
 | Check | Result |

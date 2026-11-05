@@ -46,6 +46,7 @@ function render() {
   $('coverage-bar').replaceChildren();
   for (const [count,name] of [[passed,'pass'],[failed,'high'],[gaps,'neutral']]) { if(!count)continue; const span=document.createElement('span');span.className=name;span.style.flex=String(count);$('coverage-bar').append(span); }
   renderFindings(); renderHistory();
+  document.dispatchEvent(new Event('onescanx:report'));
 }
 function renderFindings() {
   const query=$('search').value.toLowerCase(), severity=$('severity-filter').value, verification=$('verification-filter').value;
@@ -58,11 +59,13 @@ function renderFindings() {
 function clearFilters(){ $('search').value='';$('severity-filter').value='';$('verification-filter').value='';renderFindings(); }
 function changeView(view){
   state.view=view;
-  const names={overview:['Overview','Overview','Move from scan results to the fixes that matter.'],findings:['Findings','Findings','Explore findings, inspect the evidence, and prioritize remediation.'],history:['Scan history','Scan history','Revisit the reports you have opened in this session.'],guide:['How to use','How to use','A practical workflow for testing APIs you control.']};
+  const names={overview:['Overview','Overview','Move from scan results to the fixes that matter.'],findings:['Findings','Findings','Explore findings, inspect the evidence, and prioritize remediation.'],history:['Scan history','Scan history','Revisit the reports you have opened in this session.'],inventory:['API Inventory','API Inventory','Discover endpoints and document approved scope.'],newscan:['New Security Scan','New Security Scan','Run a local assessment or queue a verified platform target.'],analytics:['Security Analytics','Security Analytics','Compare evidence across assessments.'],assistant:['AI Assistant','AI Security Assistant','Answers grounded in retrieved scan evidence.'],reports:['Reports','Reports','Export and preserve your security assessments.'],integrations:['Integrations','Integrations','Connect repository specifications and platform services.'],settings:['Settings','Settings','Appearance, storage, and workspace access.'],guide:['How to use','How to use','A practical workflow for testing APIs you control.']};
   $('breadcrumb').textContent=names[view][0];$('page-title').textContent=names[view][1];$('page-description').textContent=names[view][2];
   document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.dataset.view===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
-  $('overview-view').hidden=view!=='overview';$('findings-view').hidden=!['overview','findings'].includes(view);$('history-view').hidden=view!=='history';$('guide-view').hidden=view!=='guide';$('report-banner').hidden=!['overview','findings'].includes(view);
+  $('overview-view').hidden=view!=='overview';$('findings-view').hidden=!['overview','findings'].includes(view);$('history-view').hidden=view!=='history';$('guide-view').hidden=view!=='guide';$('report-banner').hidden=!['overview','findings','inventory','analytics','assistant','reports'].includes(view);
+  document.querySelectorAll('.platform-view').forEach(el=>el.hidden=el.id!==view+'-view');
   if(view==='history')renderHistory();
+  document.dispatchEvent(new CustomEvent('onescanx:view',{detail:view}));
   window.scrollTo({top:0,behavior:'instant'});
 }
 function showFinding(index){

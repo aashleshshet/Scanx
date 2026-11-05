@@ -8,7 +8,7 @@ Use it against APIs you are authorized to test. Start with seeded test accounts 
 
 [Open the hosted workspace](https://onescanx.vercel.app) · [How to use](https://onescanx.vercel.app/workspace/how-to-use.html)
 
-The hosted Vercel site requires Vercel account sign-in and provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports. Live scans run in the optional local Python server, using the same dashboard:
+The hosted Vercel site retains Vercel account sign-in and the OnescanX name. It provides synthetic samples, JSON import, finding filters, evidence details, history, and JSON/Markdown/HTML exports, plus the platform workspace described below. Live scans run in the optional local Python server, using the same dashboard:
 
 ```bash
 # From the cloned repository, with your virtual environment active:
@@ -19,9 +19,33 @@ scanx-web --target https://your-api.example/v1
 
 Replace the placeholder with an API root you are authorized to test. Repeat `--target` for additional roots. Click **New scan**, upload your specification and scenario fixtures, choose an authentication scheme, and supply separate test-user credentials. Injection and rate tests require selecting their checkboxes. Web scans use read-only methods, a 500-request budget, and a 180-second deadline.
 
-The server is a single-operator loopback tool, not an internet-facing multi-user service. It rejects unconfigured targets and cross-origin changes, keeps at most 20 jobs in memory, and redacts credentials from reports. History clears on restart. The hosted explorer never sends scan traffic; imported reports remain in the current tab. Download JSON to preserve an assessment.
+The server is a single-operator loopback tool, not an internet-facing multi-user service. It rejects unconfigured targets and cross-origin changes, keeps at most 20 jobs in memory, and redacts credentials from reports. History clears on restart. The hosted browser never sends scan traffic directly. Imported reports remain in the current tab unless you explicitly save them on the device or to a connected platform. Download JSON to preserve an assessment.
 
 The beginner walkthrough is also included at `src/api_sentry/web/static/how-to-use.html`. The shared frontend lives under `src/api_sentry/web/static/`; `web/server.py` provides the local API. Run `python tools/build_site.py` to copy the hosted static assets into `work/scanx-site/dist`.
+
+## Intelligence workspace MVP
+
+Ten working destinations share the existing dark/light Liquid Glass UI: Overview, API Inventory, New Security Scan, Scan History, Findings, Security Analytics, AI Assistant, Reports, Integrations and Settings. The beginner guide remains available. Mobile navigation includes four primary destinations and a searchable **More** menu; desktop users can use **Ctrl/Cmd K**.
+
+- Import an OpenAPI JSON document to discover routes and declared authentication.
+- Compare loaded/saved reports for the same API; changes are observations, not proof of remediation.
+- Export CSV/JSON, print to PDF, and optionally save reports on your device.
+- Retrieve original finding evidence without a model. Optional AI synthesis requires backend configuration and explicit consent; generated prose stays advisory.
+- Import a public GitHub repository specification by exact path and branch/commit.
+- Connect the optional Python platform for PostgreSQL persistence, verified worker scans, scheduling, audit records and server-generated PDF.
+
+**Current deployment:** the browser workspace is usable without services. No hosted PostgreSQL, Redis, worker or LLM provider has been provisioned. Disconnected functions explain what is missing; they never simulate a completed live scan. Docker configuration and cloud connection settings are included. The platform is a single-operator MVP, not a multi-tenant enterprise service.
+
+[Installation and Docker](docs/platform/INSTALL.md) · [Architecture, database schema and security model](docs/platform/ARCHITECTURE.md) · [API contracts](docs/platform/API.md) · [Roadmap and limitations](docs/platform/ROADMAP.md) · [Validation record](VALIDATION.md)
+
+```sh
+cp .env.example .env
+# Fill independent random local passwords and approved targets in .env.
+docker compose up --build -d
+# Open http://localhost:8080; connect the operator session in Settings.
+```
+
+The platform adds `src/api_sentry/platform/{server,database,scope,worker,intelligence,exports,migrate}.py`, `app/api/` bridges, `platform.js`, Docker/Compose files, integration and UI tests. The existing engine and scanner modules below remain intact. Use `pip install -e '.[dev,web,platform]'` to run the complete test suite. GitHub Actions also runs dependency/secret checks, PostgreSQL/Redis worker smoke tests and Playwright/axe checks; see validation for actual run status.
 
 ## Project structure
 
@@ -63,7 +87,7 @@ git clone https://github.com/aashleshshet/Scanx.git
 cd Scanx
 python3.11 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e '.[dev,web]'
+python -m pip install -e '.[dev,web,platform]'
 
 # Inspect parsed operations, parameters, security requirements and auth scheme locations.
 api-sentry inspect --spec examples/openapi.yaml

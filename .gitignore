@@ -19,3 +19,7 @@ scenarios.local.yaml
 .env*
 !.env.example
 /.pnpm-store/
+*.db
+celerybeat-schedule*
+/test-results/
+/playwright-report/

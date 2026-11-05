@@ -1,6 +1,6 @@
 # OnescanX Liquid Glass design system
 
-Existing product and routes remain: Overview, Findings, Scan history, How to use, beginner guide, copyright, local scan configuration, and self-contained reports. Hosted authentication remains Vercel Deployment Protection. No database exists in this project; reports remain in memory.
+Existing product and routes remain: Overview, Findings, Scan history, How to use, beginner guide, copyright, local scan configuration, and self-contained reports. Hosted authentication remains Vercel Deployment Protection. An optional SQL-backed single-operator platform extends the browser workspace. Disconnected states are explicit; optional device storage requires user action.
 
 ## Tokens and surfaces
 
@@ -10,4 +10,8 @@ Blur is limited to outer panels. Nested controls use fills, and touch/reduced-tr
 
 The mobile layout provides labeled bottom navigation, safe-area spacing, stacked finding rows, 44px primary/form targets, and accessible native dialogs. The tablet breakpoint simplifies columns and keeps controls usable. Severity, source, and verification remain textual as well as colored.
 
-Portfolio badge markup, placeholder profile styles, and its JS dependency are removed. The actual OnescanX brand and all scan/report contracts remain intact. No new runtime dependencies.
+Portfolio badge markup, placeholder profile styles, and its JS dependency are removed. The actual OnescanX brand and all scan/report contracts remain intact. No new frontend runtime dependencies; Playwright and axe are development-only test dependencies.
+
+## Intelligence workspace extension
+
+The existing palette, mark, type and glass tokens carry into inventory, worker configuration, analytics, evidence retrieval, reports, integrations and settings. Report-derived views retain the source banner so synthetic results remain identifiable. Severity bars render actual counts; historical comparison uses rule/operation/verification keys with an explicit coverage caveat. Mobile navigation presents four primary routes and a More command menu rather than eleven narrow tabs. Worker progress uses actual queue states, never invented percentages.
